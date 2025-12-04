@@ -5,3 +5,4 @@ scikit-learn==1.0.2
 nltk==3.8.1
 joblib==1.2.0
 matplotlib==3.7.2
+seaborn==0.12.2  # ← Add this line
