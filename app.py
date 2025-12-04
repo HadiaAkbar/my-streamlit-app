@@ -2,27 +2,17 @@
 FactGuard - AI Powered Fact Detector
 Advanced fake news detection with stunning cyberpunk UI
 """
-# Add this at line 1, right after the triple quotes
-import streamlit as st
-import time
 
-# Show a loading screen immediately
-loading_placeholder = st.empty()
-with loading_placeholder.container():
-    st.markdown("""
-    <div style='text-align: center; padding: 100px;'>
-        <div style='font-size: 4rem; margin-bottom: 30px;'>🛡️</div>
-        <h1 style='color: #E91E8C;'>FACTGUARD</h1>
-        <p style='color: #6366F1;'>Loading AI Fact-Checking System...</p>
-    </div>
-    """, unsafe_allow_html=True)
-    time.sleep(1)
 import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime
 import time
 import plotly.graph_objects as go
+import plotly.express as px
+import json
+import requests
+from PIL import Image
 
 # ================== FACTGUARD THEME (Based on Logo) ==================
 THEME = {
@@ -38,12 +28,25 @@ THEME = {
     "glow": "#FF00FF",           # Magenta glow
 }
 
+# ================== SET PAGE CONFIG (MUST BE FIRST!) ==================
 st.set_page_config(
     page_title="FactGuard - AI Fact Detector",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# ================== LOADING PLACEHOLDER (AFTER set_page_config) ==================
+loading_placeholder = st.empty()
+with loading_placeholder.container():
+    st.markdown("""
+    <div style='text-align: center; padding: 100px;'>
+        <div style='font-size: 4rem; margin-bottom: 30px;'>🛡️</div>
+        <h1 style='color: #E91E8C;'>FACTGUARD</h1>
+        <p style='color: #6366F1;'>Loading AI Fact-Checking System...</p>
+    </div>
+    """, unsafe_allow_html=True)
+    time.sleep(1)
 
 # ================== CYBERPUNK CSS ==================
 st.markdown(f"""
@@ -1016,8 +1019,10 @@ with tab3:
             </ul>
         </div>
         """, unsafe_allow_html=True)
-# Clear the loading placeholder once everything is loaded
+
+# ================== CLEAR LOADING PLACEHOLDER ==================
 loading_placeholder.empty()
+
 # ================== FOOTER ==================
 st.markdown(f"""
 <div style='text-align: center; padding: 50px 0 30px 0;'>
