@@ -1,6 +1,6 @@
 """
 FactGuard AI - Advanced Fake News Detection System
-Enhanced with logo integration and futuristic design
+Enhanced with logo integration and futuristic UI design
 """
 
 import streamlit as st
@@ -11,6 +11,14 @@ from datetime import datetime
 import time
 import random
 import plotly.graph_objects as go
+
+# ================== PAGE CONFIG (ONLY ONE CALL) ==================
+st.set_page_config(
+    page_title="FactGuard - AI Fact Detector",
+    page_icon="🛡️",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
 # ================== ENHANCED THEME ==================
 THEME = {
@@ -23,13 +31,6 @@ THEME = {
     "success": "#00E676",
     "glow": "#FF006E",  # Neon pink glow
 }
-
-st.set_page_config(
-    page_title="FactGuard - AI Fact Detector",
-    page_icon="🛡️",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
 
 # ================== ENHANCED CSS ==================
 st.markdown(f"""
@@ -176,6 +177,10 @@ st.markdown(f"""
         background: rgba(15, 20, 45, 0.9);
     }}
     
+    .stTextArea textarea::placeholder {{
+        color: rgba(255, 255, 255, 0.5);
+    }}
+    
     .stTabs [data-baseweb="tab-list"] {{
         gap: 12px;
         background: transparent;
@@ -275,6 +280,11 @@ st.markdown(f"""
         border: 1px solid rgba(233, 30, 99, 0.3);
     }}
     
+    .stExpander {{
+        background: transparent;
+        border: none;
+    }}
+    
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
 </style>
@@ -284,7 +294,7 @@ st.markdown(f"""
 if 'news_text' not in st.session_state:
     st.session_state.news_text = ""
 
-# ================== HEADER ==================
+# ================== HEADER WITH LOGO ==================
 st.markdown("""
 <div style='text-align: center; margin-bottom: 40px; margin-top: 20px;' class='float-animation'>
     <div style='display: inline-block; position: relative;'>
@@ -594,11 +604,11 @@ with tab1:
             st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
             
             if classification == "FAKE":
-                card_bg = "linear-gradient(135deg, rgba(255, 23, 68, 0.3), rgba(255, 23, 68, 0.2))"
+                card_bg = "linear-gradient(135deg, rgba(255, 23, 68, 0.2), rgba(255, 23, 68, 0.1))"
             elif classification == "SUSPICIOUS":
-                card_bg = "linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(255, 193, 7, 0.2))"
+                card_bg = "linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1))"
             else:
-                card_bg = "linear-gradient(135deg, rgba(0, 230, 118, 0.3), rgba(0, 230, 118, 0.2))"
+                card_bg = "linear-gradient(135deg, rgba(0, 230, 118, 0.2), rgba(0, 230, 118, 0.1))"
             
             st.markdown(f"""
             <div class='glass-card pulse-animation' style='background: {card_bg}; border-left: 8px solid {verdict_color};'>
@@ -733,6 +743,7 @@ with tab3:
         </div>
         """, unsafe_allow_html=True)
 
+# ================== FOOTER ==================
 st.markdown(f"""
 <div style='text-align: center; padding: 40px 0 20px 0; color: white;'>
     <div style='font-size: 1.4rem; font-weight: 700; margin-bottom: 10px;
@@ -747,7 +758,7 @@ st.markdown(f"""
         ⚠️ This is an AI-assisted tool. Always verify important information through multiple reliable sources.
     </p>
     <p style='font-size: 0.9em; margin-top: 10px; opacity: 0.8;'>
-        Prepared by: <strong style='color: #E91E63;'>Hadia Akbar (042)</strong> | <strong style='color: #E91E63;'>Naira Shahid (062)</strong>
+        Prepared by: <strong style='color: #E91E63;'>Hadia Akbar (042)</strong> | <strong style='color: #E91E63;'>Maira Shahid (062)</strong>
     </p>
 </div>
 """, unsafe_allow_html=True)
