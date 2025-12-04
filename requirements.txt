@@ -1,6 +1,6 @@
 streamlit==1.28.1
 pandas==1.5.3
-numpy==1.24.3  # This is compatible with pandas 1.5.3
+numpy==1.26.4  # ← Specific version that works with Python 3.13
 scikit-learn==1.0.2
 nltk==3.8.1
 joblib==1.2.0
