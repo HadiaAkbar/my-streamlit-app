@@ -15,7 +15,7 @@ cd /d "%PROJECT_PATH%"
 echo [1/4] Checking Python version...
 python --version
 
-REM CHECK FOR PYTHON 3.12.7 OR COMPATIBLE VERSION
+REM CHECK FOR PYTHON 3.12.7 (LOCAL) OR ANY VERSION
 for /f "tokens=2" %%i in ('python --version 2^>^&1') do set "PYVER=%%i"
 echo Detected Python version: %PYVER%
 
@@ -24,12 +24,10 @@ for /f "tokens=1,2 delims=." %%a in ("%PYVER%") do set "PY_MAJOR_MINOR=%%a.%%b"
 
 if not "%PY_MAJOR_MINOR%"=="3.12" (
     echo.
-    echo ⚠️  WARNING: Python 3.12.x is required!
+    echo ⚠️  WARNING: Python 3.12.x recommended for local development!
     echo Current version: %PYVER%
     echo Expected: 3.12.7 (or any 3.12.x)
-    echo.
-    echo Please install Python 3.12.7 from:
-    echo https://www.python.org/downloads/release/python-3127/
+    echo Note: Streamlit Cloud uses Python 3.9
     echo.
     set /p CONTINUE="Continue anyway? (y/n): "
     if /i not "%CONTINUE%"=="y" (
@@ -55,30 +53,30 @@ python -m venv venv
 call venv\Scripts\activate.bat
 python -m pip install --upgrade pip setuptools wheel
 
-echo [3/4] Installing packages for Python %PY_MAJOR_MINOR%...
+echo [3/4] Installing packages for local development...
 
-REM Use a requirements file for better compatibility
-echo Creating optimized requirements...
+REM Use your new requirements for LOCAL development
+echo Creating requirements for local use...
 (
-echo numpy==1.26.4
-echo pandas==2.2.0
-echo scikit-learn==1.3.2
+echo streamlit==1.28.1
+echo pandas==1.5.3
+echo numpy==1.21.6
+echo scikit-learn==1.0.2
 echo nltk==3.8.1
-echo matplotlib==3.8.2
-echo plotly==5.18.0
-echo requests==2.31.0
+echo joblib==1.2.0
+echo matplotlib==3.7.2
+echo seaborn==0.12.2
+echo plotly==5.17.0
+echo textblob==0.17.1
 echo beautifulsoup4==4.12.2
-echo joblib==1.3.2
-echo python-dateutil==2.8.2
-echo tqdm==4.66.1
-echo streamlit==1.29.0
-) > requirements_py312.txt
+echo requests==2.31.0
+) > requirements_local.txt
 
-pip install -r requirements_py312.txt --no-cache-dir
-del requirements_py312.txt
+pip install -r requirements_local.txt --no-cache-dir
+del requirements_local.txt
 
 echo [4/4] Downloading NLTK data...
-python -c "import nltk; nltk.download('punkt', quiet=True); nltk.download('stopwords', quiet=True); nltk.download('wordnet', quiet=True); nltk.download('vader_lexicon', quiet=True)"
+python -c "import nltk; nltk.download('punkt', quiet=True); nltk.download('stopwords', quiet=True); nltk.download('wordnet', quiet=True)"
 echo NLTK data downloaded successfully.
 
 echo.
