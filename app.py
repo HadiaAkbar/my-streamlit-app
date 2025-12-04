@@ -12,7 +12,7 @@ import time
 import random
 import plotly.graph_objects as go
 
-# ================== PAGE CONFIG (ONLY ONE CALL) ==================
+# ================== PAGE CONFIG (MUST BE FIRST!) ==================
 st.set_page_config(
     page_title="FactGuard - AI Fact Detector",
     page_icon="🛡️",
@@ -561,7 +561,7 @@ with tab1:
     
     with col_in1:
         st.markdown("<div class='glass-card'><h4 style='margin-top: 0; color: white;'>📝 INPUT CONTENT</h4></div>", unsafe_allow_html=True)
-        news_text = st.text_area("", value=st.session_state.news_text, height=220,
+        news_text = st.text_area("Input", value=st.session_state.news_text, height=220,
             placeholder="Paste the news article, claim, or statement you want to verify here...",
             label_visibility="collapsed", key="input_text")
     
