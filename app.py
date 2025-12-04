@@ -2,7 +2,21 @@
 FactGuard - AI Powered Fact Detector
 Advanced fake news detection with stunning cyberpunk UI
 """
+# Add this at line 1, right after the triple quotes
+import streamlit as st
+import time
 
+# Show a loading screen immediately
+loading_placeholder = st.empty()
+with loading_placeholder.container():
+    st.markdown("""
+    <div style='text-align: center; padding: 100px;'>
+        <div style='font-size: 4rem; margin-bottom: 30px;'>🛡️</div>
+        <h1 style='color: #E91E8C;'>FACTGUARD</h1>
+        <p style='color: #6366F1;'>Loading AI Fact-Checking System...</p>
+    </div>
+    """, unsafe_allow_html=True)
+    time.sleep(1)
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -1002,7 +1016,8 @@ with tab3:
             </ul>
         </div>
         """, unsafe_allow_html=True)
-
+# Clear the loading placeholder once everything is loaded
+loading_placeholder.empty()
 # ================== FOOTER ==================
 st.markdown(f"""
 <div style='text-align: center; padding: 50px 0 30px 0;'>
