@@ -7,4 +7,4 @@ joblib==1.2.0
 matplotlib==3.7.2
 seaborn==0.12.2
 plotly>=5.0.0
-streamlit-lottie  # Add this line
+streamlit-lottie==0.0.5

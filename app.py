@@ -1,9 +1,20 @@
+
+
+# ================== PAGE CONFIG (MUST BE FIRST!) ==================
+import streamlit as st
+st.set_page_config(
+    page_title="FactGuard - AI Fact Detector",
+    page_icon="🛡️",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
 """
 FactGuard AI - Advanced Fake News Detection System
 Enhanced with logo integration and futuristic UI design
 """
 
-import streamlit as st
+
 import pandas as pd
 import numpy as np
 import re
@@ -12,13 +23,6 @@ import time
 import random
 import plotly.graph_objects as go
 
-# ================== PAGE CONFIG (MUST BE FIRST!) ==================
-st.set_page_config(
-    page_title="FactGuard - AI Fact Detector",
-    page_icon="🛡️",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
 
 # ================== ENHANCED THEME ==================
 THEME = {
