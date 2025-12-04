@@ -311,7 +311,7 @@ with st.sidebar:
         st.cache_resource.clear()
         st.rerun()
 
-# ================== KNOWLEDGE BASE (Same as before but modernized) ==================
+# ================== KNOWLEDGE BASE ==================
 VERIFIED_KNOWLEDGE_BASE = {
     "medical": [
         {"fact": "COVID-19 vaccines are safe and effective", "confidence": 0.98, "sources": ["WHO", "CDC", "NIH"]},
@@ -749,7 +749,7 @@ with tab1:
 with tab2:
     st.markdown("""
     <div class='modern-card' style='margin-top: 0;'>
-        <h2 style='margin-top: 0;'>📈 ANALYTICS & PERFORMANCE DASHBOARD</h2>
+        <h2 style'margin-top: 0;'>📈 ANALYTICS & PERFORMANCE DASHBOARD</h2>
         <p style='color: #6B7280;'>Real-time system metrics and historical performance data</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1006,23 +1006,4 @@ st.markdown("""
         ⚠️ This is an AI-assisted tool. Always verify important information through multiple reliable sources.
     </p>
 </div>
-""", unsafe_allow_html=True)
-
-# Add cyber grid animation
-st.markdown("""
-<script>
-// Simple cyber grid animation
-document.addEventListener('DOMContentLoaded', function() {
-    const grid = document.querySelector('.cyber-grid');
-    let angle = 0;
-    
-    function animateGrid() {
-        angle += 0.2;
-        grid.style.backgroundPosition = `${Math.sin(angle) * 10}px ${Math.cos(angle) * 10}px`;
-        requestAnimationFrame(animateGrid);
-    }
-    
-    animateGrid();
-});
-</script>
 """, unsafe_allow_html=True)
