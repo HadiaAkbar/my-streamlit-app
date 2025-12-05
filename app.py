@@ -63,24 +63,46 @@ except ImportError:
     st.warning("Transformers not installed. Some features disabled.")
 
 # ================== ENHANCED MODERN COLOR SCHEME ==================
+# ================== ENHANCED BEAUTIFUL COLOR SCHEME ==================
 THEME = {
-    "primary": "#6366F1",  # Indigo
-    "secondary": "#8B5CF6",  # Violet
-    "accent": "#10B981",  # Emerald
-    "danger": "#EF4444",  # Red
+    # Primary colors
+    "primary": "#2563EB",  # Vibrant blue
+    "secondary": "#7C3AED",  # Royal purple
+    "accent": "#0EA5E9",  # Sky blue
+    "success": "#10B981",  # Emerald green
     "warning": "#F59E0B",  # Amber
-    "dark": "#0F172A",  # Slate 900
-    "light": "#F8FAFC",  # Slate 50
-    "success": "#10B981",  # Emerald
-    "info": "#3B82F6",  # Blue
-    "purple": "#8B5CF6",  # Violet
-    "pink": "#EC4899",  # Pink
-    "cyan": "#06B6D4",  # Cyan
-    "gradient_start": "#6366F1",
-    "gradient_mid": "#8B5CF6",
-    "gradient_end": "#EC4899",
+    "danger": "#EF4444",  # Red
+    "info": "#8B5CF6",  # Violet
+    
+    # Backgrounds
+    "dark_bg": "#0F172A",  # Navy blue dark
+    "darker_bg": "#020617",  # Deep navy
+    "card_bg": "rgba(30, 41, 59, 0.7)",  # Slate 800 with transparency
+    "card_border": "rgba(148, 163, 184, 0.2)",  # Slate 400 border
+    
+    # Text colors
+    "text_primary": "#F8FAFC",  # Slate 50 - Pure white text
+    "text_secondary": "#CBD5E1",  # Slate 300 - Light gray text
+    "text_muted": "#94A3B8",  # Slate 400 - Muted text
+    "text_dark": "#1E293B",  # Slate 800 - Dark text for light backgrounds
+    
+    # Gradients
+    "gradient_start": "#3B82F6",  # Blue
+    "gradient_mid": "#8B5CF6",  # Purple
+    "gradient_end": "#EC4899",  # Pink
+    "gradient_bg": "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)",  # Dark gradient
+    
+    # Special effects
+    "glow": "rgba(59, 130, 246, 0.5)",  # Blue glow
+    "shadow": "rgba(0, 0, 0, 0.3)",
+    
+    # Chart colors
+    "chart_1": "#3B82F6",  # Blue
+    "chart_2": "#10B981",  # Green
+    "chart_3": "#F59E0B",  # Amber
+    "chart_4": "#EF4444",  # Red
+    "chart_5": "#8B5CF6",  # Purple
 }
-
 st.set_page_config(
     page_title="FactGuard AI - Production",
     page_icon="🤖",
@@ -98,19 +120,35 @@ st.markdown(f"""
     }}
     
     .stApp {{
-        background: linear-gradient(135deg, {THEME['dark']} 0%, #1E293B 100%);
+        background: {THEME['gradient_bg']};
         background-attachment: fixed;
     }}
     
+    /* Text elements - ENHANCED VISIBILITY */
+    h1, h2, h3, h4, h5, h6 {{
+        color: {THEME['text_primary']} !important;
+    }}
+    
+    p, div, span {{
+        color: {THEME['text_secondary']} !important;
+    }}
+    
+    .stMarkdown p, .stMarkdown div {{
+        color: {THEME['text_secondary']} !important;
+    }}
+    
+    /* Glass cards - ENHANCED */
     .glass-card {{
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
+        background: {THEME['card_bg']};
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
         border-radius: 20px;
         padding: 30px;
         margin: 20px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid {THEME['card_border']};
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
+                    0 0 20px rgba(59, 130, 246, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
     }}
@@ -125,17 +163,31 @@ st.markdown(f"""
         background: linear-gradient(90deg, transparent, {THEME['primary']}, transparent);
     }}
     
-    .glass-card:hover {{
-        transform: translateY(-5px);
-        box-shadow: 0 20px 60px rgba({THEME['primary']}, 0.2);
-        border-color: rgba({THEME['primary']}, 0.3);
+    .glass-card::after {{
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.1) 0%, 
+            transparent 50%, 
+            rgba(139, 92, 246, 0.1) 100%);
+        z-index: -1;
     }}
     
+    .glass-card:hover {{
+        transform: translateY(-8px) scale(1.01);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                    0 0 30px {THEME['glow']};
+        border-color: rgba(59, 130, 246, 0.4);
+    }}
+    
+    /* Gradient text */
     .gradient-text {{
         background: linear-gradient(135deg, {THEME['gradient_start']}, {THEME['gradient_mid']}, {THEME['gradient_end']});
         background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         animation: gradient-shift 3s ease infinite;
         font-weight: 900;
     }}
@@ -146,20 +198,22 @@ st.markdown(f"""
         100% {{ background-position: 0% center; }}
     }}
     
+    /* Buttons */
     .stButton > button {{
         background: linear-gradient(135deg, {THEME['primary']} 0%, {THEME['secondary']} 100%);
-        color: white;
+        color: {THEME['text_primary']} !important;
         border: none;
-        padding: 12px 28px;
+        padding: 14px 32px;
         border-radius: 12px;
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: 700;
+        font-size: 15px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         position: relative;
         overflow: hidden;
+        min-height: 52px;
     }}
     
     .stButton > button::before {{
@@ -174,40 +228,57 @@ st.markdown(f"""
     }}
     
     .stButton > button:hover {{
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.4);
         background: linear-gradient(135deg, {THEME['secondary']} 0%, {THEME['primary']} 100%);
+        color: white !important;
     }}
     
     .stButton > button:hover::before {{
         left: 100%;
     }}
     
-    .pulse-animation {{
-        animation: pulse 2s ease-in-out infinite;
+    /* Text areas and inputs */
+    .stTextArea textarea, .stTextInput input {{
+        background: rgba(15, 23, 42, 0.8) !important;
+        border: 2px solid rgba(59, 130, 246, 0.3) !important;
+        border-radius: 12px !important;
+        color: {THEME['text_primary']} !important;
+        font-size: 16px !important;
+        padding: 16px !important;
+        transition: all 0.3s ease !important;
     }}
     
-    @keyframes pulse {{
-        0%, 100% {{ opacity: 1; transform: scale(1); }}
-        50% {{ opacity: 0.8; transform: scale(1.05); }}
+    .stTextArea textarea:focus, .stTextInput input:focus {{
+        border-color: {THEME['primary']} !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+        background: rgba(15, 23, 42, 0.9) !important;
     }}
     
+    .stTextArea textarea::placeholder {{
+        color: {THEME['text_muted']} !important;
+        opacity: 0.7;
+    }}
+    
+    /* File upload */
     .file-upload {{
-        border: 2px dashed rgba({THEME['primary']}, 0.3);
-        border-radius: 12px;
+        border: 2px dashed {THEME['card_border']};
+        border-radius: 16px;
         padding: 40px;
         text-align: center;
         transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(59, 130, 246, 0.05);
     }}
     
     .file-upload:hover {{
         border-color: {THEME['primary']};
-        background: rgba({THEME['primary']}, 0.05);
+        background: rgba(59, 130, 246, 0.1);
+        box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
     }}
     
+    /* Tabs */
     .tab-container {{
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(30, 41, 59, 0.5);
         border-radius: 16px;
         padding: 2px;
         margin: 20px 0;
@@ -219,88 +290,207 @@ st.markdown(f"""
     }}
     
     .stTabs [data-baseweb="tab"] {{
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: rgba(30, 41, 59, 0.7);
         border-radius: 12px 12px 0 0;
-        padding: 16px 24px;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.7);
+        padding: 18px 28px;
+        font-weight: 700;
+        color: {THEME['text_muted']};
         border: 1px solid transparent;
         transition: all 0.3s ease;
+        font-size: 16px;
     }}
     
     .stTabs [data-baseweb="tab"]:hover {{
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
+        background-color: rgba(59, 130, 246, 0.2);
+        color: {THEME['text_primary']};
+        border-color: rgba(59, 130, 246, 0.3);
     }}
     
     .stTabs [aria-selected="true"] {{
-        background-color: rgba({THEME['primary']}, 0.2);
+        background-color: rgba(59, 130, 246, 0.3);
         color: {THEME['primary']};
         border-color: {THEME['primary']};
         border-bottom-color: transparent;
+        font-weight: 800;
     }}
     
+    /* Metrics and cards */
     .metric-card {{
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.15), 
+            rgba(139, 92, 246, 0.15));
         border-radius: 16px;
-        padding: 24px;
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        padding: 28px;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        backdrop-filter: blur(10px);
     }}
     
+    /* Status chips */
     .chip {{
         display: inline-block;
-        padding: 4px 12px;
+        padding: 6px 16px;
         border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        margin: 2px;
+        font-size: 14px;
+        font-weight: 700;
+        margin: 4px;
+        backdrop-filter: blur(10px);
     }}
     
     .chip-fake {{
-        background: rgba(239, 68, 68, 0.2);
-        color: #EF4444;
-        border: 1px solid rgba(239, 68, 68, 0.3);
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(220, 38, 38, 0.25));
+        color: #FECACA;
+        border: 1px solid rgba(239, 68, 68, 0.4);
     }}
     
     .chip-real {{
-        background: rgba(16, 185, 129, 0.2);
-        color: #10B981;
-        border: 1px solid rgba(16, 185, 129, 0.3);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.25));
+        color: #A7F3D0;
+        border: 1px solid rgba(16, 185, 129, 0.4);
     }}
     
     .chip-suspicious {{
-        background: rgba(245, 158, 11, 0.2);
-        color: #F59E0B;
-        border: 1px solid rgba(245, 158, 11, 0.3);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.25));
+        color: #FDE68A;
+        border: 1px solid rgba(245, 158, 11, 0.4);
     }}
     
+    /* Status indicators */
     .status-indicator {{
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
+        gap: 10px;
+        padding: 10px 20px;
         border-radius: 20px;
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: 700;
+        font-size: 15px;
+        backdrop-filter: blur(10px);
     }}
     
     .status-active {{
-        background: rgba(16, 185, 129, 0.1);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
         color: #10B981;
         border: 1px solid rgba(16, 185, 129, 0.3);
     }}
     
     .status-warning {{
-        background: rgba(245, 158, 11, 0.1);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15));
         color: #F59E0B;
         border: 1px solid rgba(245, 158, 11, 0.3);
     }}
     
     .status-error {{
-        background: rgba(239, 68, 68, 0.1);
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15));
         color: #EF4444;
         border: 1px solid rgba(239, 68, 68, 0.3);
     }}
+    
+    /* Pulse animation */
+    .pulse-animation {{
+        animation: pulse 2s ease-in-out infinite;
+    }}
+    
+    @keyframes pulse {{
+        0%, 100% {{ 
+            opacity: 1; 
+            transform: scale(1); 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }}
+        50% {{ 
+            opacity: 0.9; 
+            transform: scale(1.02);
+            box-shadow: 0 15px 50px rgba(59, 130, 246, 0.3);
+        }}
+    }}
+    
+    /* Streamlit specific fixes */
+    .stMetric {{
+        color: {THEME['text_primary']} !important;
+    }}
+    
+    .stMetric label {{
+        color: {THEME['text_secondary']} !important;
+    }}
+    
+    .stMetric div[data-testid="stMetricValue"] {{
+        color: {THEME['text_primary']} !important;
+        font-weight: 800;
+    }}
+    
+    /* Dataframes */
+    .dataframe {{
+        color: {THEME['text_primary']} !important;
+        background: {THEME['card_bg']} !important;
+    }}
+    
+    /* Expander */
+    .streamlit-expanderHeader {{
+        color: {THEME['text_primary']} !important;
+        background: rgba(30, 41, 59, 0.7) !important;
+        border-radius: 10px !important;
+        border: 1px solid {THEME['card_border']} !important;
+    }}
+    
+    .streamlit-expanderContent {{
+        background: rgba(30, 41, 59, 0.5) !important;
+        border-radius: 0 0 10px 10px !important;
+    }}
+    
+    /* Alert boxes */
+    .stAlert {{
+        background: rgba(30, 41, 59, 0.9) !important;
+        border: 1px solid {THEME['card_border']} !important;
+        border-radius: 12px !important;
+        color: {THEME['text_primary']} !important;
+    }}
+    
+    /* Fix for all text visibility */
+    div[data-testid="stExpander"], 
+    div[data-testid="stVerticalBlock"],
+    div[data-testid="stHorizontalBlock"],
+    section[data-testid="stSidebar"],
+    .st-emotion-cache-1qg05tj {{
+        color: {THEME['text_primary']} !important;
+    }}
+</style>
+""", unsafe_allow_html=True)
+# Extra CSS for specific visibility improvements
+st.markdown("""
+<style>
+    /* Force white text in all Streamlit containers */
+    .stMarkdown, 
+    .stMarkdown p, 
+    .stMarkdown span, 
+    .stMarkdown div,
+    .st-emotion-cache-1qg05tj,
+    .st-emotion-cache-1c7u2zo,
+    .st-emotion-cache-16idsys p {
+        color: #F8FAFC !important;
+    }
+    
+    /* Make placeholder text visible */
+    textarea::placeholder,
+    input::placeholder {
+        color: #94A3B8 !important;
+        opacity: 0.8 !important;
+    }
+    
+    /* Make select boxes visible */
+    select {
+        background-color: rgba(15, 23, 42, 0.9) !important;
+        color: #F8FAFC !important;
+        border: 2px solid rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    /* Make all labels visible */
+    label {
+        color: #CBD5E1 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Make expander content visible */
+    .streamlit-expanderContent * {
+        color: #CBD5E1 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -855,99 +1045,93 @@ class FactGuardProduction:
             'has_conspiracy': any(phrase in text.lower() for phrase in ['cover up', 'hidden truth', 'they don\'t want you', 'secret'])
         }
     
-    def _calculate_final_verdict(self, analysis):
-        """Calculate final verdict"""
-        scores = []
-        weights = []
-        
-        # ML Score
-        if analysis.get('ml_predictions', {}).get('ensemble_prediction'):
-            ml_pred = analysis['ml_predictions']['ensemble_prediction']
-            ml_score = ml_pred['fake_probability'] * 100
-            scores.append(ml_score)
-            weights.append(0.35)
-        
-        # DL Score
-        if analysis.get('dl_predictions', {}).get('fake_news', {}).get('fake_probability'):
-            dl_pred = analysis['dl_predictions']['fake_news']
-            dl_score = dl_pred['fake_probability'] * 100
-            scores.append(dl_score)
-            weights.append(0.25)
-        
-        # Linguistic Score
-        ling = analysis['linguistic_features']
-        ling_score = 0
-        if ling['has_urgency']: ling_score += 20
-        if ling['has_exaggeration']: ling_score += 20
-        if ling['has_conspiracy']: ling_score += 25
-        if ling['exclamation_count'] > 3: ling_score += 15
-        if ling['caps_ratio'] > 0.3: ling_score += 10
-        ling_score = min(ling_score, 100)
-        
-        scores.append(ling_score)
-        weights.append(0.20)
-        
-        # Media Bias Score
-        bias_score = 50  # Default
-        if analysis['api_checks'].get('media_bias'):
-            bias_data = analysis['api_checks']['media_bias']
-            if bias_data.get('found'):
-                bias_score = 100 - bias_data.get('factual_score', 50)
-        
-        scores.append(bias_score)
-        weights.append(0.10)
-        
-        # API Score (if fact checks found)
-        api_score = 50  # Default
-        google_results = analysis['api_checks'].get('google_fact_check', {})
-        if google_results.get('status') == 'success':
-            if google_results.get('claims_found', 0) > 0:
-                api_score = 70  # Claims found = needs verification
-            else:
-                api_score = 30  # No claims = possibly novel/true
-        
-        scores.append(api_score)
-        weights.append(0.10)
-        
-        # Calculate weighted average
-        if scores and weights:
-            final_fake_score = np.average(scores, weights=weights)
-        else:
-            final_fake_score = 50
-        
-        credibility_score = 100 - final_fake_score
-        
-        # Determine verdict
-        if final_fake_score > 70:
-            verdict = "FAKE"
-            color = THEME['danger']
-            emoji = "🔴"
-            confidence = min(0.95, final_fake_score / 100)
-        elif final_fake_score > 50:
-            verdict = "SUSPICIOUS"
-            color = THEME['warning']
-            emoji = "🟡"
-            confidence = 0.75
-        elif credibility_score > 60:
-            verdict = "CREDIBLE"
-            color = THEME['success']
-            emoji = "🟢"
-            confidence = 0.80
-        else:
-            verdict = "UNCERTAIN"
-            color = THEME['warning']
-            emoji = "⚪"
-            confidence = 0.60
-        
-        return {
-            'fake_score': float(final_fake_score),
-            'credibility_score': float(credibility_score),
-            'verdict': verdict,
-            'color': color,
-            'emoji': emoji,
-            'confidence': float(confidence),
-            'weights_used': [float(w) for w in weights]
-        }
+def _calculate_final_verdict(self, analysis):
+    """Calculate final verdict - STRICTER VERSION"""
+    scores = []
+    weights = []
+    
+    # ML Score
+    if analysis.get('ml_predictions', {}).get('ensemble_prediction'):
+        ml_pred = analysis['ml_predictions']['ensemble_prediction']
+        ml_score = ml_pred['fake_probability'] * 100
+        scores.append(ml_score)
+        weights.append(0.40)  # Increased weight
+    
+    # DL Score
+    if analysis.get('dl_predictions', {}).get('fake_news', {}).get('fake_probability'):
+        dl_pred = analysis['dl_predictions']['fake_news']
+        dl_score = dl_pred['fake_probability'] * 100
+        scores.append(dl_score)
+        weights.append(0.30)  # Increased weight
+    
+    # Linguistic Score - MAKE IT STRICTER
+    ling = analysis['linguistic_features']
+    ling_score = 0
+    if ling['has_urgency']: ling_score += 25  # Increased
+    if ling['has_exaggeration']: ling_score += 25  # Increased
+    if ling['has_conspiracy']: ling_score += 30  # Increased
+    if ling['exclamation_count'] > 2: ling_score += 15  # Lower threshold
+    if ling['caps_ratio'] > 0.2: ling_score += 15  # Lower threshold
+    if ling['url_count'] > 1: ling_score += 10  # Added URL penalty
+    ling_score = min(ling_score, 100)
+    
+    scores.append(ling_score)
+    weights.append(0.20)
+    
+    # Media Bias Score
+    bias_score = 60  # Default to more skeptical
+    if analysis['api_checks'].get('media_bias'):
+        bias_data = analysis['api_checks']['media_bias']
+        if bias_data.get('found'):
+            bias_score = 100 - bias_data.get('factual_score', 50)
+    
+    scores.append(bias_score)
+    weights.append(0.10)
+    
+    # Calculate weighted average
+    if scores and weights:
+        final_fake_score = np.average(scores, weights=weights)
+    else:
+        final_fake_score = 60  # Default to skeptical
+    
+    credibility_score = 100 - final_fake_score
+    
+    # STRICTER VERDICT CRITERIA
+    if final_fake_score >= 65:
+        verdict = "❌ FALSE NEWS"
+        verdict_simple = "FALSE"
+        color = THEME['danger']
+        emoji = "❌"
+        confidence = min(0.95, final_fake_score / 100)
+    elif final_fake_score >= 40:  # Lowered threshold
+        verdict = "⚠️ LIKELY FALSE"
+        verdict_simple = "LIKELY FALSE"
+        color = THEME['warning']
+        emoji = "⚠️"
+        confidence = 0.75
+    elif credibility_score >= 70:  # Higher threshold for credible
+        verdict = "✅ REAL NEWS"
+        verdict_simple = "TRUE"
+        color = THEME['success']
+        emoji = "✅"
+        confidence = 0.80
+    else:
+        verdict = "❓ UNCERTAIN-NEEDS VERIFICATION"
+        verdict_simple = "UNVERIFIED"
+        color = "#6B7280"  # Gray
+        emoji = "❓"
+        confidence = 0.60
+    
+    return {
+        'fake_score': float(final_fake_score),
+        'credibility_score': float(credibility_score),
+        'verdict': verdict,
+        'verdict_simple': verdict_simple,  # Added simple verdict
+        'color': color,
+        'emoji': emoji,
+        'confidence': float(confidence),
+        'weights_used': [float(w) for w in weights]
+    }
 
 # ================== VISUALIZATION ==================
 def create_gauge_chart(value, title, color):
@@ -1016,15 +1200,16 @@ def create_model_comparison_chart(ml_predictions):
 analyzer = FactGuardProduction()
 
 # ================== HEADER ==================
-st.markdown("""
+# ================== HEADER ==================
+st.markdown(f"""
 <div style='text-align: center; margin-bottom: 40px; margin-top: 20px;' class='pulse-animation'>
     <h1 style='font-size: 4rem; margin-bottom: 10px;' class='gradient-text'>
         🛡️ FACTGUARD PRODUCTION
     </h1>
-    <p style='font-size: 1.3rem; color: rgba(255,255,255,0.8); font-weight: 600;'>
-        Multi-Input Fake News Detection System
+    <p style='font-size: 1.3rem; color: {THEME["text_secondary"]}; font-weight: 600;'>
+        AI-powered Fake News Detection System
     </p>
-    <div style='height: 4px; width: 300px; background: linear-gradient(90deg, transparent, white, transparent); 
+    <div style='height: 4px; width: 300px; background: linear-gradient(90deg, transparent, {THEME["primary"]}, transparent); 
                 margin: 24px auto; border-radius: 3px; opacity: 0.8;'></div>
 </div>
 """, unsafe_allow_html=True)
@@ -1058,10 +1243,10 @@ tab1, tab2, tab3, tab4 = st.tabs(["📤 UPLOAD FILE", "📝 TEXT INPUT", "📊 A
 with tab1:
     st.markdown("""
     <div class='glass-card'>
-        <h2 style='margin-top: 0; color: white;'>📤 Upload File for Analysis</h2>
-        <p style='color: rgba(255,255,255,0.7);'>
+        <h2 style='margin-top: 0; color: {THEME["text_primary"]};'>📤 Upload File for Analysis</h2>
+        <p style='color: {THEME["text_secondary"]};'>
             Upload documents, articles, or text files for comprehensive fake news detection.
-            Supports <strong>TXT, PDF, DOCX, CSV</strong> formats.
+            Supports <strong style='color: {THEME["accent"]};'>TXT, PDF, DOCX, CSV</strong> formats.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -1132,8 +1317,8 @@ with tab1:
 with tab2:
     st.markdown("""
     <div class='glass-card'>
-        <h2 style='margin-top: 0; color: white;'>📝 Direct Text Input</h2>
-        <p style='color: rgba(255,255,255,0.7);'>
+        <h2 style='margin-top: 0; color: {THEME["text_primary"]};'>📝 Direct Text Input</h2>
+        <p style='color: {THEME["text_secondary"]};'>
             Paste news articles, social media posts, or claims directly for immediate analysis.
         </p>
     </div>
@@ -1178,6 +1363,13 @@ Example real news: "According to a study published in The Lancet, COVID-19 vacci
             st.session_state.analysis_results = None
             st.session_state.uploaded_file = None
             st.session_state.uploaded_content = ""
+             # IMPORTANT: Also clear the text area widget state
+            if "input_text" in st.session_state:
+                st.session_state.input_text = ""
+    
+    # Clear the file uploader
+            if "file_uploader" in st.session_state:
+                st.session_state.file_uploader = None
             st.rerun()
     
     # Display file content if uploaded
@@ -1375,7 +1567,7 @@ with tab3:
             # Recommendations
             st.subheader("💡 Recommendations")
             
-            if verdict["verdict"] == "FAKE":
+            if verdict["verdict"] == "FALSE NEWS":
                 st.error("""
                 🚨 **HIGH RISK - DO NOT SHARE**
                 • This content shows strong indicators of misinformation
@@ -1383,7 +1575,7 @@ with tab3:
                 • Verify with trusted fact-checkers before considering
                 • Report if found on social media platforms
                 """)
-            elif verdict["verdict"] == "SUSPICIOUS":
+            elif verdict["verdict"] == "LIKELY FALSE":
                 st.warning("""
                 ⚠ **SUSPICIOUS CONTENT**
                 • Contains some deceptive elements
@@ -1391,9 +1583,9 @@ with tab3:
                 • Check dates, authors, and sources carefully
                 • Be cautious of emotional manipulation
                 """)
-            elif verdict["verdict"] == "CREDIBLE":
+            elif verdict["verdict"] == "REAL NEWS":
                 st.success("""
-                ✅ **APPEARS CREDIBLE**
+                ✅ **REAL NEWS---appears CREDIBLE**
                 • Passes multiple verification checks
                 • Still verify with original sources
                 • Check for recent updates or corrections
@@ -1519,19 +1711,21 @@ with tab4:
         """)
 
 # ================== FOOTER ==================
+# ================== FOOTER ==================
 st.markdown(f"""
-<div style='text-align: center; padding: 40px 0 20px 0; color: rgba(255,255,255,0.8);'>
+<div style='text-align: center; padding: 40px 0 20px 0; color: {THEME["text_muted"]};'>
     <div style='font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;' class='gradient-text'>
         🛡️ FACTGUARD PRODUCTION v4.0
     </div>
     <p style='font-size: 0.95rem; opacity: 0.9;'>
         Multi-Input • Real APIs • Machine Learning • Deep Learning • Media Bias Database
     </p>
-    <div style='margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);'>
-        <p style='font-size: 0.9em; opacity: 0.8;'>
-            Developed by: <strong>Hadia Akbar (042)</strong> | <strong>Maira Shahid (062)</strong>
+    <div style='margin-top: 20px; padding-top: 20px; border-top: 1px solid {THEME["card_border"]};'>
+        <p style='font-size: 0.9em; opacity: 0.9;'>
+            Developed by: <strong style='color: {THEME["text_primary"]}'>Hadia Akbar (042)</strong> | 
+            <strong style='color: {THEME["text_primary"]}'>Maira Shahid (062)</strong>
         </p>
-        <p style='font-size: 0.8em; opacity: 0.7; margin-top: 10px;'>
+        <p style='font-size: 0.8em; opacity: 0.8; margin-top: 10px; color: {THEME["text_muted"]};'>
             ⚠️ This is a production-ready system. Add your API keys for full functionality.
         </p>
     </div>
