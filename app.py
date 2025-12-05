@@ -1,6 +1,7 @@
 
 
 # ================== PAGE CONFIG (MUST BE FIRST!) ==================
+# Updated: 2025-12-05
 import streamlit as st
 st.set_page_config(
     page_title="FactGuard - AI Fact Detector",
