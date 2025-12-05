@@ -1281,13 +1281,13 @@ with tab1:
                     disabled=True
                 )
             
-            # Analyze button for file content
-            if st.button("🚀 ANALYZE UPLOADED FILE", type="primary", use_container_width=True):
-                if content and len(content.strip()) > 10:
-                    st.session_state.news_text = content[:5000]  # Limit text length
-                    st.rerun()
-                else:
-                    st.error("File content is too short or empty. Please upload a valid file.")
+           # In TAB 1, fix the "ANALYZE UPLOADED FILE" button:
+if st.button("🚀 ANALYZE UPLOADED FILE", type="primary", use_container_width=True):
+    if content and len(content.strip()) > 10:
+        st.session_state.news_text = content[:5000]  # Limit text length
+        # DON'T use st.rerun() here - let Streamlit handle it
+    else:
+        st.error("File content is too short or empty. Please upload a valid file.")
     
     with col2:
         st.markdown("""
@@ -1312,6 +1312,7 @@ with tab1:
             </p>
         </div>
         """, unsafe_allow_html=True)
+
 
 # ================== TAB 2: TEXT INPUT ==================
 with tab2:
@@ -1342,28 +1343,25 @@ Example real news: "According to a study published in The Lancet, COVID-19 vacci
     with col2:
         st.markdown("<div style='margin-bottom: 20px; color: white;'><strong>🧪 Test Samples:</strong></div>", unsafe_allow_html=True)
         
+        # Test sample buttons WITHOUT st.rerun()
         if st.button("🤥 Fake News", use_container_width=True):
             st.session_state.news_text = "🚨 BREAKING: SECRET DOCUMENTS REVEAL COVID VACCINES CONTAIN TRACKING MICROCHIPS! Government and Big Pharma COLLUDING to control population through 5G towers! ACT NOW before they delete this!"
-            st.rerun()
         
         if st.button("📰 Real News", use_container_width=True):
             st.session_state.news_text = "According to a study published in The Lancet, COVID-19 vaccines have been shown to reduce transmission by up to 90%. The research, conducted across multiple countries, analyzed data from over 1 million vaccinated individuals."
-            st.rerun()
         
         if st.button("💰 Financial Scam", use_container_width=True):
             st.session_state.news_text = "💰 EARN $5,000 WEEKLY FROM HOME! NO EXPERIENCE NEEDED! Banks HATE this secret method! LIMITED SPOTS - ACT NOW before it's gone forever! 💰"
-            st.rerun()
         
         if st.button("📈 Business News", use_container_width=True):
             st.session_state.news_text = "Apple Inc. reported quarterly earnings of $1.26 per share, beating analyst estimates of $1.19 per share. The company's revenue rose 36% year-over-year to $81.4 billion, driven by strong iPhone and Mac sales."
-            st.rerun()
-                # Clear All button - CORRECTED VERSION
+        
+        # Clear All button WITHOUT st.rerun()
         if st.button("🗑️ Clear All", use_container_width=True, key="clear_all_btn"):
             st.session_state.news_text = ""
             st.session_state.analysis_results = None
             st.session_state.uploaded_file = None
             st.session_state.uploaded_content = ""
-            st.rerun()
     
     # Display file content if uploaded
     if st.session_state.uploaded_content and st.session_state.news_text == st.session_state.uploaded_content:
@@ -1372,9 +1370,13 @@ Example real news: "According to a study published in The Lancet, COVID-19 vacci
     analyze_btn = st.button("🚀 START COMPREHENSIVE ANALYSIS", type="primary", use_container_width=True)
     
     if analyze_btn and news_text.strip():
+        # Store the text in session state
+        st.session_state.news_text = news_text
+        
         # Start analysis
-        analysis = analyzer.analyze(news_text)
-        st.session_state.analysis_results = analysis
+        with st.spinner("🔍 Analyzing content..."):
+            analysis = analyzer.analyze(news_text)
+            st.session_state.analysis_results = analysis
         
         # Display results
         verdict = analysis['final_verdict']
