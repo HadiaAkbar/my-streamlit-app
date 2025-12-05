@@ -1,11 +1,10 @@
 
-
 """
 FactGuard AI - Advanced Fake News Detection System
 Enhanced with logo integration and futuristic UI design
 """
 
-
+import streamlit as st
 import pandas as pd
 import numpy as np
 import re
