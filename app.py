@@ -428,7 +428,7 @@ with tab1:
         
         if st.button("🗑 Clear All", use_container_width=True):
             st.session_state.news_text = ""
-            st.rerun()
+            st.experimental_rerun()
     
     col_a1, col_a2, col_a3 = st.columns([1, 2, 1])
     with col_a2:
