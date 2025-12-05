@@ -14,7 +14,7 @@ requests==2.31.0
 python-dotenv==1.0.0
 nltk==3.8.1
 transformers==4.36.2
-torch==2.1.2   --extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.2   "--extra-index-url" https://download.pytorch.org/whl/cpu
 newsapi-python==0.2.7
 
 # Optional but recommended for better performance
