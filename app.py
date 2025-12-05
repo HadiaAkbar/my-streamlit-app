@@ -1045,92 +1045,92 @@ class FactGuardProduction:
             'has_conspiracy': any(phrase in text.lower() for phrase in ['cover up', 'hidden truth', 'they don\'t want you', 'secret'])
         }
     
-def _calculate_final_verdict(self, analysis):
-    """Calculate final verdict - STRICTER VERSION"""
-    scores = []
-    weights = []
+    def _calculate_final_verdict(self, analysis):
+        """Calculate final verdict - STRICTER VERSION"""
+        scores = []
+        weights = []
     
     # ML Score
-    if analysis.get('ml_predictions', {}).get('ensemble_prediction'):
-        ml_pred = analysis['ml_predictions']['ensemble_prediction']
-        ml_score = ml_pred['fake_probability'] * 100
-        scores.append(ml_score)
-        weights.append(0.40)  # Increased weight
+        if analysis.get('ml_predictions', {}).get('ensemble_prediction'):
+            ml_pred = analysis['ml_predictions']['ensemble_prediction']
+            ml_score = ml_pred['fake_probability'] * 100
+            scores.append(ml_score)
+            weights.append(0.40)  # Increased weight
     
     # DL Score
-    if analysis.get('dl_predictions', {}).get('fake_news', {}).get('fake_probability'):
-        dl_pred = analysis['dl_predictions']['fake_news']
-        dl_score = dl_pred['fake_probability'] * 100
-        scores.append(dl_score)
-        weights.append(0.30)  # Increased weight
+        if analysis.get('dl_predictions', {}).get('fake_news', {}).get('fake_probability'):
+            dl_pred = analysis['dl_predictions']['fake_news']
+            dl_score = dl_pred['fake_probability'] * 100
+            scores.append(dl_score)
+            weights.append(0.30)  # Increased weight
     
     # Linguistic Score - MAKE IT STRICTER
-    ling = analysis['linguistic_features']
-    ling_score = 0
-    if ling['has_urgency']: ling_score += 25  # Increased
-    if ling['has_exaggeration']: ling_score += 25  # Increased
-    if ling['has_conspiracy']: ling_score += 30  # Increased
-    if ling['exclamation_count'] > 2: ling_score += 15  # Lower threshold
-    if ling['caps_ratio'] > 0.2: ling_score += 15  # Lower threshold
-    if ling['url_count'] > 1: ling_score += 10  # Added URL penalty
-    ling_score = min(ling_score, 100)
+        ling = analysis['linguistic_features']
+        ling_score = 0
+        if ling['has_urgency']: ling_score += 25  # Increased
+        if ling['has_exaggeration']: ling_score += 25  # Increased
+        if ling['has_conspiracy']: ling_score += 30  # Increased
+        if ling['exclamation_count'] > 2: ling_score += 15  # Lower threshold
+        if ling['caps_ratio'] > 0.2: ling_score += 15  # Lower threshold
+        if ling['url_count'] > 1: ling_score += 10  # Added URL penalty
+        ling_score = min(ling_score, 100)
     
-    scores.append(ling_score)
-    weights.append(0.20)
+        scores.append(ling_score)
+        weights.append(0.20)
     
     # Media Bias Score
-    bias_score = 60  # Default to more skeptical
-    if analysis['api_checks'].get('media_bias'):
-        bias_data = analysis['api_checks']['media_bias']
-        if bias_data.get('found'):
-            bias_score = 100 - bias_data.get('factual_score', 50)
+        bias_score = 60  # Default to more skeptical
+        if analysis['api_checks'].get('media_bias'):
+            bias_data = analysis['api_checks']['media_bias']
+            if bias_data.get('found'):
+                bias_score = 100 - bias_data.get('factual_score', 50)
     
-    scores.append(bias_score)
-    weights.append(0.10)
+        scores.append(bias_score)
+        weights.append(0.10)
     
     # Calculate weighted average
-    if scores and weights:
-        final_fake_score = np.average(scores, weights=weights)
-    else:
-        final_fake_score = 60  # Default to skeptical
+        if scores and weights:
+            final_fake_score = np.average(scores, weights=weights)
+        else:
+            final_fake_score = 60  # Default to skeptical
     
-    credibility_score = 100 - final_fake_score
+        credibility_score = 100 - final_fake_score
     
     # STRICTER VERDICT CRITERIA
-    if final_fake_score >= 65:
-        verdict = "❌ FALSE NEWS"
-        verdict_simple = "FALSE"
-        color = THEME['danger']
-        emoji = "❌"
-        confidence = min(0.95, final_fake_score / 100)
-    elif final_fake_score >= 40:  # Lowered threshold
-        verdict = "⚠️ LIKELY FALSE"
-        verdict_simple = "LIKELY FALSE"
-        color = THEME['warning']
-        emoji = "⚠️"
-        confidence = 0.75
-    elif credibility_score >= 70:  # Higher threshold for credible
-        verdict = "✅ REAL NEWS"
-        verdict_simple = "TRUE"
-        color = THEME['success']
-        emoji = "✅"
-        confidence = 0.80
-    else:
-        verdict = "❓ UNCERTAIN-NEEDS VERIFICATION"
-        verdict_simple = "UNVERIFIED"
-        color = "#6B7280"  # Gray
-        emoji = "❓"
-        confidence = 0.60
+        if final_fake_score >= 65:
+            verdict = "❌ FALSE NEWS"
+            verdict_simple = "FALSE"
+            color = THEME['danger']
+            emoji = "❌"
+            confidence = min(0.95, final_fake_score / 100)
+        elif final_fake_score >= 40:  # Lowered threshold
+            verdict = "⚠️ LIKELY FALSE"
+            verdict_simple = "LIKELY FALSE"
+            color = THEME['warning']
+            emoji = "⚠️"
+            confidence = 0.75
+        elif credibility_score >= 70:  # Higher threshold for credible
+            verdict = "✅ REAL NEWS"
+            verdict_simple = "TRUE"
+            color = THEME['success']
+            emoji = "✅"
+            confidence = 0.80
+        else:
+            verdict = "❓ UNCERTAIN-NEEDS VERIFICATION"
+            verdict_simple = "UNVERIFIED"
+            color = "#6B7280"  # Gray
+            emoji = "❓"
+            confidence = 0.60
     
-    return {
-        'fake_score': float(final_fake_score),
-        'credibility_score': float(credibility_score),
-        'verdict': verdict,
-        'verdict_simple': verdict_simple,  # Added simple verdict
-        'color': color,
-        'emoji': emoji,
-        'confidence': float(confidence),
-        'weights_used': [float(w) for w in weights]
+        return {
+            'fake_score': float(final_fake_score),
+            'credibility_score': float(credibility_score),
+            'verdict': verdict,
+            'verdict_simple': verdict_simple,  # Added simple verdict
+            'color': color,
+            'emoji': emoji,
+            'confidence': float(confidence),
+            'weights_used': [float(w) for w in weights]
     }
 
 # ================== VISUALIZATION ==================
@@ -1387,23 +1387,36 @@ Example real news: "According to a study published in The Lancet, COVID-19 vacci
         verdict = analysis['final_verdict']
         
         # Verdict card
-        st.markdown(f"""
-        <div class='glass-card pulse-animation' style='border-left: 8px solid {verdict["color"]};'>
-            <div style='display: flex; align-items: center; gap: 24px;'>
-                <div style='font-size: 4rem;'>{verdict["emoji"]}</div>
-                <div>
-                    <h1 style='margin: 0; color: {verdict["color"]}; font-size: 2.5rem;'>
-                        {verdict["verdict"]}
-                    </h1>
-                    <p style='color: rgba(255,255,255,0.7); margin: 8px 0 0 0; font-size: 1.1rem;'>
-                        Credibility Score: {verdict["credibility_score"]:.1f}% | 
-                        Fake Score: {verdict["fake_score"]:.1f}% |
-                        Confidence: {verdict["confidence"]*100:.1f}%
-                    </p>
+        # Verdict card - UPDATED
+st.markdown(f"""
+<div class='glass-card pulse-animation' style='border-left: 8px solid {verdict["color"]}; background: rgba({int(verdict["color"][1:3], 16)}, {int(verdict["color"][3:5], 16)}, {int(verdict["color"][5:7], 16)}, 0.1);'>
+    <div style='display: flex; align-items: center; gap: 24px;'>
+        <div style='font-size: 5rem;'>{verdict["emoji"]}</div>
+        <div>
+            <h1 style='margin: 0; color: {verdict["color"]}; font-size: 3.5rem; font-weight: 900;'>
+                {verdict["verdict_simple"]}
+            </h1>
+            <p style='color: white; margin: 8px 0; font-size: 1.5rem; font-weight: 600;'>
+                {verdict["verdict"]}
+            </p>
+            <div style='display: flex; gap: 20px; margin-top: 15px;'>
+                <div style='background: rgba(16, 185, 129, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);'>
+                    <strong style='color: #10B981; font-size: 1.1rem;'>TRUTH SCORE:</strong> 
+                    <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["credibility_score"]:.1f}%</span>
+                </div>
+                <div style='background: rgba(239, 68, 68, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);'>
+                    <strong style='color: #EF4444; font-size: 1.1rem;'>FAKE SCORE:</strong> 
+                    <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["fake_score"]:.1f}%</span>
+                </div>
+                <div style='background: rgba(59, 130, 246, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);'>
+                    <strong style='color: #3B82F6; font-size: 1.1rem;'>CONFIDENCE:</strong> 
+                    <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["confidence"]*100:.1f}%</span>
                 </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ================== TAB 3: ANALYSIS RESULTS ==================
 with tab3:
