@@ -62,7 +62,6 @@ except ImportError:
     TRANSFORMERS_AVAILABLE = False
     st.warning("Transformers not installed. Some features disabled.")
 
-# ================== ENHANCED MODERN COLOR SCHEME ==================
 # ================== ENHANCED BEAUTIFUL COLOR SCHEME ==================
 THEME = {
     # Primary colors
@@ -103,6 +102,7 @@ THEME = {
     "chart_4": "#EF4444",  # Red
     "chart_5": "#8B5CF6",  # Purple
 }
+
 st.set_page_config(
     page_title="FactGuard AI - Production",
     page_icon="🤖",
@@ -453,6 +453,7 @@ st.markdown(f"""
     }}
 </style>
 """, unsafe_allow_html=True)
+
 # Extra CSS for specific visibility improvements
 st.markdown("""
 <style>
@@ -1049,22 +1050,22 @@ class FactGuardProduction:
         """Calculate final verdict - STRICTER VERSION"""
         scores = []
         weights = []
-    
-    # ML Score
+        
+        # ML Score
         if analysis.get('ml_predictions', {}).get('ensemble_prediction'):
             ml_pred = analysis['ml_predictions']['ensemble_prediction']
             ml_score = ml_pred['fake_probability'] * 100
             scores.append(ml_score)
             weights.append(0.40)  # Increased weight
-    
-    # DL Score
+        
+        # DL Score
         if analysis.get('dl_predictions', {}).get('fake_news', {}).get('fake_probability'):
             dl_pred = analysis['dl_predictions']['fake_news']
             dl_score = dl_pred['fake_probability'] * 100
             scores.append(dl_score)
             weights.append(0.30)  # Increased weight
-    
-    # Linguistic Score - MAKE IT STRICTER
+        
+        # Linguistic Score - MAKE IT STRICTER
         ling = analysis['linguistic_features']
         ling_score = 0
         if ling['has_urgency']: ling_score += 25  # Increased
@@ -1074,29 +1075,29 @@ class FactGuardProduction:
         if ling['caps_ratio'] > 0.2: ling_score += 15  # Lower threshold
         if ling['url_count'] > 1: ling_score += 10  # Added URL penalty
         ling_score = min(ling_score, 100)
-    
+        
         scores.append(ling_score)
         weights.append(0.20)
-    
-    # Media Bias Score
+        
+        # Media Bias Score
         bias_score = 60  # Default to more skeptical
         if analysis['api_checks'].get('media_bias'):
             bias_data = analysis['api_checks']['media_bias']
             if bias_data.get('found'):
                 bias_score = 100 - bias_data.get('factual_score', 50)
-    
+        
         scores.append(bias_score)
         weights.append(0.10)
-    
-    # Calculate weighted average
+        
+        # Calculate weighted average
         if scores and weights:
             final_fake_score = np.average(scores, weights=weights)
         else:
             final_fake_score = 60  # Default to skeptical
-    
+        
         credibility_score = 100 - final_fake_score
-    
-    # STRICTER VERDICT CRITERIA
+        
+        # STRICTER VERDICT CRITERIA
         if final_fake_score >= 65:
             verdict = "❌ FALSE NEWS"
             verdict_simple = "FALSE"
@@ -1121,7 +1122,7 @@ class FactGuardProduction:
             color = "#6B7280"  # Gray
             emoji = "❓"
             confidence = 0.60
-    
+        
         return {
             'fake_score': float(final_fake_score),
             'credibility_score': float(credibility_score),
@@ -1131,7 +1132,7 @@ class FactGuardProduction:
             'emoji': emoji,
             'confidence': float(confidence),
             'weights_used': [float(w) for w in weights]
-    }
+        }
 
 # ================== VISUALIZATION ==================
 def create_gauge_chart(value, title, color):
@@ -1200,7 +1201,6 @@ def create_model_comparison_chart(ml_predictions):
 analyzer = FactGuardProduction()
 
 # ================== HEADER ==================
-# ================== HEADER ==================
 st.markdown(f"""
 <div style='text-align: center; margin-bottom: 40px; margin-top: 20px;' class='pulse-animation'>
     <h1 style='font-size: 4rem; margin-bottom: 10px;' class='gradient-text'>
@@ -1241,7 +1241,7 @@ tab1, tab2, tab3, tab4 = st.tabs(["📤 UPLOAD FILE", "📝 TEXT INPUT", "📊 A
 
 # ================== TAB 1: FILE UPLOAD ==================
 with tab1:
-    st.markdown("""
+    st.markdown(f"""
     <div class='glass-card'>
         <h2 style='margin-top: 0; color: {THEME["text_primary"]};'>📤 Upload File for Analysis</h2>
         <p style='color: {THEME["text_secondary"]};'>
@@ -1315,7 +1315,7 @@ with tab1:
 
 # ================== TAB 2: TEXT INPUT ==================
 with tab2:
-    st.markdown("""
+    st.markdown(f"""
     <div class='glass-card'>
         <h2 style='margin-top: 0; color: {THEME["text_primary"]};'>📝 Direct Text Input</h2>
         <p style='color: {THEME["text_secondary"]};'>
@@ -1358,18 +1358,20 @@ Example real news: "According to a study published in The Lancet, COVID-19 vacci
             st.session_state.news_text = "Apple Inc. reported quarterly earnings of $1.26 per share, beating analyst estimates of $1.19 per share. The company's revenue rose 36% year-over-year to $81.4 billion, driven by strong iPhone and Mac sales."
             st.rerun()
         
-        if st.button("🗑️ Clear", use_container_width=True):
+        if st.button("🗑️ Clear All", use_container_width=True, key="clear_all_btn"):
             st.session_state.news_text = ""
             st.session_state.analysis_results = None
             st.session_state.uploaded_file = None
             st.session_state.uploaded_content = ""
-             # IMPORTANT: Also clear the text area widget state
+            
+            # Clear widget states
             if "input_text" in st.session_state:
                 st.session_state.input_text = ""
-    
-    # Clear the file uploader
+            
+            # Clear file uploader
             if "file_uploader" in st.session_state:
                 st.session_state.file_uploader = None
+            
             st.rerun()
     
     # Display file content if uploaded
@@ -1386,37 +1388,36 @@ Example real news: "According to a study published in The Lancet, COVID-19 vacci
         # Display results
         verdict = analysis['final_verdict']
         
-        # Verdict card
         # Verdict card - UPDATED
-st.markdown(f"""
-<div class='glass-card pulse-animation' style='border-left: 8px solid {verdict["color"]}; background: rgba({int(verdict["color"][1:3], 16)}, {int(verdict["color"][3:5], 16)}, {int(verdict["color"][5:7], 16)}, 0.1);'>
-    <div style='display: flex; align-items: center; gap: 24px;'>
-        <div style='font-size: 5rem;'>{verdict["emoji"]}</div>
-        <div>
-            <h1 style='margin: 0; color: {verdict["color"]}; font-size: 3.5rem; font-weight: 900;'>
-                {verdict["verdict_simple"]}
-            </h1>
-            <p style='color: white; margin: 8px 0; font-size: 1.5rem; font-weight: 600;'>
-                {verdict["verdict"]}
-            </p>
-            <div style='display: flex; gap: 20px; margin-top: 15px;'>
-                <div style='background: rgba(16, 185, 129, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);'>
-                    <strong style='color: #10B981; font-size: 1.1rem;'>TRUTH SCORE:</strong> 
-                    <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["credibility_score"]:.1f}%</span>
-                </div>
-                <div style='background: rgba(239, 68, 68, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);'>
-                    <strong style='color: #EF4444; font-size: 1.1rem;'>FAKE SCORE:</strong> 
-                    <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["fake_score"]:.1f}%</span>
-                </div>
-                <div style='background: rgba(59, 130, 246, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);'>
-                    <strong style='color: #3B82F6; font-size: 1.1rem;'>CONFIDENCE:</strong> 
-                    <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["confidence"]*100:.1f}%</span>
+        st.markdown(f"""
+        <div class='glass-card pulse-animation' style='border-left: 8px solid {verdict["color"]}; background: rgba({int(verdict["color"][1:3], 16)}, {int(verdict["color"][3:5], 16)}, {int(verdict["color"][5:7], 16)}, 0.1);'>
+            <div style='display: flex; align-items: center; gap: 24px;'>
+                <div style='font-size: 5rem;'>{verdict["emoji"]}</div>
+                <div>
+                    <h1 style='margin: 0; color: {verdict["color"]}; font-size: 3.5rem; font-weight: 900;'>
+                        {verdict["verdict_simple"]}
+                    </h1>
+                    <p style='color: white; margin: 8px 0; font-size: 1.5rem; font-weight: 600;'>
+                        {verdict["verdict"]}
+                    </p>
+                    <div style='display: flex; gap: 20px; margin-top: 15px;'>
+                        <div style='background: rgba(16, 185, 129, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);'>
+                            <strong style='color: #10B981; font-size: 1.1rem;'>TRUTH SCORE:</strong> 
+                            <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["credibility_score"]:.1f}%</span>
+                        </div>
+                        <div style='background: rgba(239, 68, 68, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);'>
+                            <strong style='color: #EF4444; font-size: 1.1rem;'>FAKE SCORE:</strong> 
+                            <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["fake_score"]:.1f}%</span>
+                        </div>
+                        <div style='background: rgba(59, 130, 246, 0.2); padding: 10px 20px; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);'>
+                            <strong style='color: #3B82F6; font-size: 1.1rem;'>CONFIDENCE:</strong> 
+                            <span style='color: white; font-weight: 800; font-size: 1.2rem;'> {verdict["confidence"]*100:.1f}%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
 # ================== TAB 3: ANALYSIS RESULTS ==================
 with tab3:
@@ -1580,7 +1581,7 @@ with tab3:
             # Recommendations
             st.subheader("💡 Recommendations")
             
-            if verdict["verdict"] == "FALSE NEWS":
+            if verdict["verdict_simple"] == "FALSE":
                 st.error("""
                 🚨 **HIGH RISK - DO NOT SHARE**
                 • This content shows strong indicators of misinformation
@@ -1588,7 +1589,7 @@ with tab3:
                 • Verify with trusted fact-checkers before considering
                 • Report if found on social media platforms
                 """)
-            elif verdict["verdict"] == "LIKELY FALSE":
+            elif verdict["verdict_simple"] == "LIKELY FALSE":
                 st.warning("""
                 ⚠ **SUSPICIOUS CONTENT**
                 • Contains some deceptive elements
@@ -1596,9 +1597,9 @@ with tab3:
                 • Check dates, authors, and sources carefully
                 • Be cautious of emotional manipulation
                 """)
-            elif verdict["verdict"] == "REAL NEWS":
+            elif verdict["verdict_simple"] == "TRUE":
                 st.success("""
-                ✅ **REAL NEWS---appears CREDIBLE**
+                ✅ **REAL NEWS - Appears Credible**
                 • Passes multiple verification checks
                 • Still verify with original sources
                 • Check for recent updates or corrections
@@ -1606,7 +1607,7 @@ with tab3:
                 """)
             else:
                 st.info("""
-                ⚪ **INCONCLUSIVE**
+                ⚪ **INCONCLUSIVE - Needs Verification**
                 • Requires human verification
                 • Check with established fact-checkers
                 • Look for corroborating evidence
@@ -1723,7 +1724,6 @@ with tab4:
         - GDPR compliant design
         """)
 
-# ================== FOOTER ==================
 # ================== FOOTER ==================
 st.markdown(f"""
 <div style='text-align: center; padding: 40px 0 20px 0; color: {THEME["text_muted"]};'>
