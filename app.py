@@ -1,15 +1,5 @@
 
 
-# ================== PAGE CONFIG (MUST BE FIRST!) ==================
-# Updated: 2025-12-05
-import streamlit as st
-st.set_page_config(
-    page_title="FactGuard - AI Fact Detector",
-    page_icon="🛡️",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-
 """
 FactGuard AI - Advanced Fake News Detection System
 Enhanced with logo integration and futuristic UI design
