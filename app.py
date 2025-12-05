@@ -1358,20 +1358,17 @@ Example real news: "According to a study published in The Lancet, COVID-19 vacci
             st.session_state.news_text = "Apple Inc. reported quarterly earnings of $1.26 per share, beating analyst estimates of $1.19 per share. The company's revenue rose 36% year-over-year to $81.4 billion, driven by strong iPhone and Mac sales."
             st.rerun()
         
-        if st.button("🗑️ Clear All", use_container_width=True, key="clear_all_btn"):
+        # Add this function at the top of your TAB 2 section
+        def clear_all():
             st.session_state.news_text = ""
             st.session_state.analysis_results = None
             st.session_state.uploaded_file = None
             st.session_state.uploaded_content = ""
-            
-            # Clear widget states
-            if "input_text" in st.session_state:
-                st.session_state.input_text = ""
-            
-            # Clear file uploader
-            if "file_uploader" in st.session_state:
-                st.session_state.file_uploader = None
-            
+          # Don't try to clear widget states directly
+          # Instead, let the rerun handle it
+
+# Then update your button to use on_click
+        if st.button("🗑️ Clear All", use_container_width=True, key="clear_all_btn", on_click=clear_all):
             st.rerun()
     
     # Display file content if uploaded
