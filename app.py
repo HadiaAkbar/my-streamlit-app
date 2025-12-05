@@ -211,8 +211,11 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ================== SESSION STATE ==================
+# ================== SESSION STATE ==================
 if 'news_text' not in st.session_state:
     st.session_state.news_text = ""
+if 'clear_trigger' not in st.session_state:
+    st.session_state.clear_trigger = False
 
 # ================== HEADER ==================
 st.markdown("""
@@ -411,10 +414,24 @@ with tab1:
     
     with col_in1:
         st.markdown("<div class='glass-card'><h4 style='margin-top: 0; color: #1F2937;'>📝 INPUT CONTENT</h4></div>", unsafe_allow_html=True)
-        news_text = st.text_area("", value=st.session_state.news_text, height=220,
-            placeholder="Paste the news article, claim, or statement you want to verify here...",
-            label_visibility="collapsed", key="input_text")
     
+    # Reset if clear was triggered
+    if st.session_state.clear_trigger:
+        default_value = ""
+        st.session_state.clear_trigger = False
+    else:
+        default_value = st.session_state.news_text
+    
+    news_text = st.text_area("", 
+        value=default_value, 
+        height=220,
+        placeholder="Paste the news article, claim, or statement you want to verify here...",
+        label_visibility="collapsed", 
+        key="text_area_unique")
+    
+    # Update session state
+    if news_text != "":
+        st.session_state.news_text = news_text
     with col_in2:
         st.markdown("<div class='glass-card' style='height: 100%;'><h4 style='margin-top: 0; color: #1F2937;'>⚡ QUICK TESTS</h4></div>", unsafe_allow_html=True)
         
@@ -427,12 +444,12 @@ with tab1:
             st.rerun()
         
         if st.button("🗑 Clear All", use_container_width=True):
+            st.session_state.clear_trigger = True
             st.session_state.news_text = ""
-            st.experimental_rerun()
-    
+            st.rerun()
     col_a1, col_a2, col_a3 = st.columns([1, 2, 1])
     with col_a2:
-        analyze_btn = st.button("🚀 LAUNCH ANALYSIS", use_container_width=True, type="primary")
+        analyze_btn = st.button("ANALYZE", use_container_width=True, type="primary")
     
     if analyze_btn and news_text:
         with st.spinner("🔬 Analyzing with Multi-Layer AI..."):
