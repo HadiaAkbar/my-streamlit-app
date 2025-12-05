@@ -1,5 +1,6 @@
 """
 FACTGUARD PRODUCTION - Real Fake News Detection with APIs & ML Models
+Enhanced with File Upload & Modern Design
 """
 
 import streamlit as st
@@ -14,6 +15,9 @@ import plotly.graph_objects as go
 import plotly.express as px
 from collections import Counter
 import os
+import io
+import tempfile
+from pathlib import Path
 from dotenv import load_dotenv
 import warnings
 warnings.filterwarnings('ignore')
@@ -58,17 +62,25 @@ except ImportError:
     TRANSFORMERS_AVAILABLE = False
     st.warning("Transformers not installed. Some features disabled.")
 
-# ================== ENHANCED THEME ==================
+# ================== ENHANCED MODERN COLOR SCHEME ==================
 THEME = {
-    "primary": "#E91E63",
-    "secondary": "#9C27B0",
-    "accent": "#00E5FF",
-    "danger": "#FF1744",
-    "warning": "#FFC107",
-    "dark": "#0A0E27",
-    "success": "#00E676",
-    "glow": "#FF006E",
+    "primary": "#6366F1",  # Indigo
+    "secondary": "#8B5CF6",  # Violet
+    "accent": "#10B981",  # Emerald
+    "danger": "#EF4444",  # Red
+    "warning": "#F59E0B",  # Amber
+    "dark": "#0F172A",  # Slate 900
+    "light": "#F8FAFC",  # Slate 50
+    "success": "#10B981",  # Emerald
+    "info": "#3B82F6",  # Blue
+    "purple": "#8B5CF6",  # Violet
+    "pink": "#EC4899",  # Pink
+    "cyan": "#06B6D4",  # Cyan
+    "gradient_start": "#6366F1",
+    "gradient_mid": "#8B5CF6",
+    "gradient_end": "#EC4899",
 }
+
 st.set_page_config(
     page_title="FactGuard AI - Production",
     page_icon="🤖",
@@ -79,35 +91,48 @@ st.set_page_config(
 # ================== CSS ==================
 st.markdown(f"""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
     
     * {{
         font-family: 'Inter', sans-serif;
     }}
     
     .stApp {{
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        background: linear-gradient(135deg, {THEME['dark']} 0%, #1E293B 100%);
         background-attachment: fixed;
     }}
     
     .glass-card {{
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(20px);
-        border-radius: 24px;
+        border-radius: 20px;
         padding: 30px;
         margin: 20px 0;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }}
+    
+    .glass-card::before {{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, {THEME['primary']}, transparent);
     }}
     
     .glass-card:hover {{
         transform: translateY(-5px);
-        box-shadow: 0 12px 48px rgba(31, 38, 135, 0.25);
+        box-shadow: 0 20px 60px rgba({THEME['primary']}, 0.2);
+        border-color: rgba({THEME['primary']}, 0.3);
     }}
     
     .gradient-text {{
-        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        background: linear-gradient(135deg, {THEME['gradient_start']}, {THEME['gradient_mid']}, {THEME['gradient_end']});
         background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -122,23 +147,40 @@ st.markdown(f"""
     }}
     
     .stButton > button {{
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, {THEME['primary']} 0%, {THEME['secondary']} 100%);
         color: white;
         border: none;
-        padding: 14px 32px;
-        border-radius: 16px;
-        font-weight: 700;
-        font-size: 15px;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }}
+    
+    .stButton > button::before {{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
     }}
     
     .stButton > button:hover {{
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        background: linear-gradient(135deg, {THEME['secondary']} 0%, {THEME['primary']} 100%);
+    }}
+    
+    .stButton > button:hover::before {{
+        left: 100%;
     }}
     
     .pulse-animation {{
@@ -148,6 +190,116 @@ st.markdown(f"""
     @keyframes pulse {{
         0%, 100% {{ opacity: 1; transform: scale(1); }}
         50% {{ opacity: 0.8; transform: scale(1.05); }}
+    }}
+    
+    .file-upload {{
+        border: 2px dashed rgba({THEME['primary']}, 0.3);
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.02);
+    }}
+    
+    .file-upload:hover {{
+        border-color: {THEME['primary']};
+        background: rgba({THEME['primary']}, 0.05);
+    }}
+    
+    .tab-container {{
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 16px;
+        padding: 2px;
+        margin: 20px 0;
+    }}
+    
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: 8px;
+        background-color: transparent;
+    }}
+    
+    .stTabs [data-baseweb="tab"] {{
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 12px 12px 0 0;
+        padding: 16px 24px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+    }}
+    
+    .stTabs [data-baseweb="tab"]:hover {{
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }}
+    
+    .stTabs [aria-selected="true"] {{
+        background-color: rgba({THEME['primary']}, 0.2);
+        color: {THEME['primary']};
+        border-color: {THEME['primary']};
+        border-bottom-color: transparent;
+    }}
+    
+    .metric-card {{
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }}
+    
+    .chip {{
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin: 2px;
+    }}
+    
+    .chip-fake {{
+        background: rgba(239, 68, 68, 0.2);
+        color: #EF4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }}
+    
+    .chip-real {{
+        background: rgba(16, 185, 129, 0.2);
+        color: #10B981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }}
+    
+    .chip-suspicious {{
+        background: rgba(245, 158, 11, 0.2);
+        color: #F59E0B;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }}
+    
+    .status-indicator {{
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+    }}
+    
+    .status-active {{
+        background: rgba(16, 185, 129, 0.1);
+        color: #10B981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }}
+    
+    .status-warning {{
+        background: rgba(245, 158, 11, 0.1);
+        color: #F59E0B;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }}
+    
+    .status-error {{
+        background: rgba(239, 68, 68, 0.1);
+        color: #EF4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -159,6 +311,52 @@ if 'analysis_results' not in st.session_state:
     st.session_state.analysis_results = None
 if 'ml_model' not in st.session_state:
     st.session_state.ml_model = None
+if 'uploaded_file' not in st.session_state:
+    st.session_state.uploaded_file = None
+if 'uploaded_content' not in st.session_state:
+    st.session_state.uploaded_content = ""
+
+# ================== FILE PROCESSING FUNCTIONS ==================
+def process_uploaded_file(file):
+    """Process uploaded file and extract text content"""
+    try:
+        content = ""
+        
+        if file.name.endswith('.txt'):
+            content = file.read().decode('utf-8')
+        
+        elif file.name.endswith('.pdf'):
+            try:
+                import PyPDF2
+                pdf_reader = PyPDF2.PdfReader(file)
+                content = ""
+                for page_num in range(len(pdf_reader.pages)):
+                    page = pdf_reader.pages[page_num]
+                    content += page.extract_text()
+            except:
+                content = "PDF processing failed. Please ensure PyPDF2 is installed."
+        
+        elif file.name.endswith('.docx'):
+            try:
+                import docx
+                doc = docx.Document(file)
+                content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+            except:
+                content = "DOCX processing failed. Please ensure python-docx is installed."
+        
+        elif file.name.endswith('.csv'):
+            df = pd.read_csv(file)
+            # Extract text from all string columns
+            text_columns = df.select_dtypes(include=['object']).columns
+            if len(text_columns) > 0:
+                content = "\n".join(df[text_columns[0]].dropna().astype(str).tolist())
+            else:
+                content = "CSV file doesn't contain text columns"
+        
+        return content.strip()
+    
+    except Exception as e:
+        return f"Error processing file: {str(e)}"
 
 # ================== COMPREHENSIVE MEDIA BIAS DATABASE ==================
 MEDIA_BIAS_DATABASE = {
@@ -757,19 +955,29 @@ def create_gauge_chart(value, title, color):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
-        title={'text': title, 'font': {'size': 18}},
+        title={'text': title, 'font': {'size': 18, 'color': 'white'}},
         number={'font': {'size': 36, 'color': color}},
         gauge={
-            'axis': {'range': [None, 100]},
+            'axis': {'range': [None, 100], 'tickcolor': 'white', 'tickfont': {'color': 'white'}},
             'bar': {'color': color},
             'steps': [
-                {'range': [0, 30], 'color': '#D1FAE5'},
-                {'range': [30, 70], 'color': '#FEF3C7'},
-                {'range': [70, 100], 'color': '#FEE2E2'}
-            ]
+                {'range': [0, 30], 'color': 'rgba(16, 185, 129, 0.3)'},
+                {'range': [30, 70], 'color': 'rgba(245, 158, 11, 0.3)'},
+                {'range': [70, 100], 'color': 'rgba(239, 68, 68, 0.3)'}
+            ],
+            'threshold': {
+                'line': {'color': color, 'width': 4},
+                'thickness': 0.75,
+                'value': value
+            }
         }
     ))
-    fig.update_layout(height=300, margin=dict(l=20, r=20, t=50, b=20))
+    fig.update_layout(
+        height=300, 
+        margin=dict(l=20, r=20, t=50, b=20),
+        paper_bgcolor='rgba(0,0,0,0)',
+        font={'color': 'white'}
+    )
     return fig
 
 def create_model_comparison_chart(ml_predictions):
@@ -777,23 +985,29 @@ def create_model_comparison_chart(ml_predictions):
     if not ml_predictions.get('individual_predictions'):
         return None
     
-    models = list(ml_predictions['individual_predictions'].keys())
+    models = [m.replace('_', ' ').title() for m in ml_predictions['individual_predictions'].keys()]
     fake_probs = [ml_predictions['individual_predictions'][m]['fake_probability'] * 100 
-                  for m in models]
+                  for m in ml_predictions['individual_predictions'].keys()]
     accuracies = [ml_predictions['individual_predictions'][m]['accuracy'] * 100 
-                  for m in models]
+                  for m in ml_predictions['individual_predictions'].keys()]
     
     fig = go.Figure(data=[
-        go.Bar(name='Fake Probability', x=models, y=fake_probs, marker_color='#EF4444'),
-        go.Bar(name='Model Accuracy', x=models, y=accuracies, marker_color='#10B981')
+        go.Bar(name='Fake Probability', x=models, y=fake_probs, marker_color=THEME['danger']),
+        go.Bar(name='Model Accuracy', x=models, y=accuracies, marker_color=THEME['success'])
     ])
     
     fig.update_layout(
         barmode='group',
-        title='ML Model Predictions Comparison',
+        title={'text': 'ML Model Predictions Comparison', 'font': {'color': 'white'}},
         height=400,
         yaxis_title='Percentage (%)',
-        yaxis_range=[0, 100]
+        yaxis_range=[0, 100],
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font={'color': 'white'},
+        legend={'font': {'color': 'white'}},
+        xaxis={'tickfont': {'color': 'white'}},
+        yaxis={'tickfont': {'color': 'white'}}
     )
     
     return fig
@@ -805,12 +1019,12 @@ analyzer = FactGuardProduction()
 st.markdown("""
 <div style='text-align: center; margin-bottom: 40px; margin-top: 20px;' class='pulse-animation'>
     <h1 style='font-size: 4rem; margin-bottom: 10px;' class='gradient-text'>
-        🤖 FACTGUARD PRODUCTION
+        🛡️ FACTGUARD PRODUCTION
     </h1>
-    <p style='font-size: 1.3rem; color: white; font-weight: 600;'>
-        Real API + ML + Deep Learning Fake News Detection
+    <p style='font-size: 1.3rem; color: rgba(255,255,255,0.8); font-weight: 600;'>
+        Multi-Input Fake News Detection System
     </p>
-    <div style='height: 5px; width: 200px; background: white; 
+    <div style='height: 4px; width: 300px; background: linear-gradient(90deg, transparent, white, transparent); 
                 margin: 24px auto; border-radius: 3px; opacity: 0.8;'></div>
 </div>
 """, unsafe_allow_html=True)
@@ -821,39 +1035,106 @@ with st.expander("🔧 API Configuration Status", expanded=False):
     
     with col1:
         if GOOGLE_API_KEY:
-            st.success("✅ Google Fact Check API: Configured")
+            st.markdown('<div class="status-indicator status-active">✅ Google Fact Check API</div>', unsafe_allow_html=True)
         else:
-            st.error("❌ Google Fact Check API: Not configured")
-            st.info("Get key: https://developers.google.com/fact-check/tools/api")
+            st.markdown('<div class="status-indicator status-warning">⚠ Google Fact Check API</div>', unsafe_allow_html=True)
     
     with col2:
         if NEWSAPI_KEY:
-            st.success("✅ NewsAPI: Configured")
+            st.markdown('<div class="status-indicator status-active">✅ NewsAPI</div>', unsafe_allow_html=True)
         else:
-            st.warning("⚠ NewsAPI: Not configured")
-            st.info("Get key: https://newsapi.org")
+            st.markdown('<div class="status-indicator status-warning">⚠ NewsAPI</div>', unsafe_allow_html=True)
     
     with col3:
         if ML_AVAILABLE:
-            st.success("✅ ML Models: Available")
+            st.markdown('<div class="status-indicator status-active">✅ ML Models</div>', unsafe_allow_html=True)
         else:
-            st.error("❌ ML Models: Not available")
-    
-    if TRANSFORMERS_AVAILABLE:
-        st.success("✅ Deep Learning: Available (Transformers)")
-    else:
-        st.warning("⚠ Deep Learning: Limited mode")
+            st.markdown('<div class="status-indicator status-error">❌ ML Models</div>', unsafe_allow_html=True)
 
 # ================== MAIN INTERFACE ==================
-tab1, tab2, tab3 = st.tabs(["🔍 VERIFY", "📊 ANALYSIS", "⚙ SYSTEM"])
+tab1, tab2, tab3, tab4 = st.tabs(["📤 UPLOAD FILE", "📝 TEXT INPUT", "📊 ANALYSIS", "⚙ SYSTEM"])
 
+# ================== TAB 1: FILE UPLOAD ==================
 with tab1:
     st.markdown("""
     <div class='glass-card'>
-        <h2 style='margin-top: 0; color: #1F2937;'>🤖 Production-Grade Verification</h2>
-        <p style='color: #6B7280;'>
-            Uses <strong>real APIs</strong>, <strong>ML models</strong>, and <strong>Deep Learning</strong> 
-            for comprehensive fake news detection.
+        <h2 style='margin-top: 0; color: white;'>📤 Upload File for Analysis</h2>
+        <p style='color: rgba(255,255,255,0.7);'>
+            Upload documents, articles, or text files for comprehensive fake news detection.
+            Supports <strong>TXT, PDF, DOCX, CSV</strong> formats.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        uploaded_file = st.file_uploader(
+            "Choose a file",
+            type=['txt', 'pdf', 'docx', 'csv'],
+            help="Upload a file containing news text to analyze",
+            key="file_uploader"
+        )
+        
+        if uploaded_file is not None:
+            # Store file in session state
+            st.session_state.uploaded_file = uploaded_file
+            
+            # Process file
+            with st.spinner("📄 Processing file..."):
+                content = process_uploaded_file(uploaded_file)
+                st.session_state.uploaded_content = content
+                
+            st.success(f"✅ File processed: {uploaded_file.name}")
+            
+            # Display preview
+            with st.expander("📄 Preview File Content", expanded=True):
+                st.text_area(
+                    "File Content Preview",
+                    value=content[:1000] + ("..." if len(content) > 1000 else ""),
+                    height=200,
+                    disabled=True
+                )
+            
+            # Analyze button for file content
+            if st.button("🚀 ANALYZE UPLOADED FILE", type="primary", use_container_width=True):
+                if content and len(content.strip()) > 10:
+                    st.session_state.news_text = content[:5000]  # Limit text length
+                    st.rerun()
+                else:
+                    st.error("File content is too short or empty. Please upload a valid file.")
+    
+    with col2:
+        st.markdown("""
+        <div class='file-upload'>
+            <div style='font-size: 3rem;'>📁</div>
+            <h3 style='color: white;'>Drag & Drop</h3>
+            <p style='color: rgba(255,255,255,0.6);'>or click to browse</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style='margin-top: 20px; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 12px;'>
+            <h4 style='color: white; margin-top: 0;'>📋 Supported Formats</h4>
+            <ul style='color: rgba(255,255,255,0.8);'>
+                <li><strong>.txt</strong> - Plain text files</li>
+                <li><strong>.pdf</strong> - PDF documents</li>
+                <li><strong>.docx</strong> - Word documents</li>
+                <li><strong>.csv</strong> - CSV files</li>
+            </ul>
+            <p style='color: rgba(255,255,255,0.6); font-size: 0.9em;'>
+                Max file size: 10MB
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ================== TAB 2: TEXT INPUT ==================
+with tab2:
+    st.markdown("""
+    <div class='glass-card'>
+        <h2 style='margin-top: 0; color: white;'>📝 Direct Text Input</h2>
+        <p style='color: rgba(255,255,255,0.7);'>
+            Paste news articles, social media posts, or claims directly for immediate analysis.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -865,12 +1146,16 @@ with tab1:
             "Enter news text to verify:",
             value=st.session_state.news_text,
             height=250,
-            placeholder="Paste news article, social media post, or claim here...\n\nExample fake news: 'Miracle cure that doctors hate! Secret government documents reveal shocking truth!'",
+            placeholder='''Paste news article, social media post, or claim here...
+
+Example fake news: "🚨 BREAKING: SECRET DOCUMENTS REVEAL COVID VACCINES CONTAIN TRACKING MICROCHIPS! Government and Big Pharma COLLUDING to control population through 5G towers! ACT NOW before they delete this!"
+
+Example real news: "According to a study published in The Lancet, COVID-19 vaccines have been shown to reduce transmission by up to 90%. The research, conducted across multiple countries, analyzed data from over 1 million vaccinated individuals."''',
             key="input_text"
         )
     
     with col2:
-        st.markdown("<div style='margin-bottom: 20px;'><strong>🧪 Test Samples:</strong></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-bottom: 20px; color: white;'><strong>🧪 Test Samples:</strong></div>", unsafe_allow_html=True)
         
         if st.button("🤥 Fake News", use_container_width=True):
             st.session_state.news_text = "🚨 BREAKING: SECRET DOCUMENTS REVEAL COVID VACCINES CONTAIN TRACKING MICROCHIPS! Government and Big Pharma COLLUDING to control population through 5G towers! ACT NOW before they delete this!"
@@ -884,10 +1169,20 @@ with tab1:
             st.session_state.news_text = "💰 EARN $5,000 WEEKLY FROM HOME! NO EXPERIENCE NEEDED! Banks HATE this secret method! LIMITED SPOTS - ACT NOW before it's gone forever! 💰"
             st.rerun()
         
+        if st.button("📈 Business News", use_container_width=True):
+            st.session_state.news_text = "Apple Inc. reported quarterly earnings of $1.26 per share, beating analyst estimates of $1.19 per share. The company's revenue rose 36% year-over-year to $81.4 billion, driven by strong iPhone and Mac sales."
+            st.rerun()
+        
         if st.button("🗑️ Clear", use_container_width=True):
             st.session_state.news_text = ""
             st.session_state.analysis_results = None
+            st.session_state.uploaded_file = None
+            st.session_state.uploaded_content = ""
             st.rerun()
+    
+    # Display file content if uploaded
+    if st.session_state.uploaded_content and st.session_state.news_text == st.session_state.uploaded_content:
+        st.info(f"📄 Currently analyzing uploaded file content ({len(st.session_state.news_text)} characters)")
     
     analyze_btn = st.button("🚀 START COMPREHENSIVE ANALYSIS", type="primary", use_container_width=True)
     
@@ -908,7 +1203,7 @@ with tab1:
                     <h1 style='margin: 0; color: {verdict["color"]}; font-size: 2.5rem;'>
                         {verdict["verdict"]}
                     </h1>
-                    <p style='color: #6B7280; margin: 8px 0 0 0; font-size: 1.1rem;'>
+                    <p style='color: rgba(255,255,255,0.7); margin: 8px 0 0 0; font-size: 1.1rem;'>
                         Credibility Score: {verdict["credibility_score"]:.1f}% | 
                         Fake Score: {verdict["fake_score"]:.1f}% |
                         Confidence: {verdict["confidence"]*100:.1f}%
@@ -917,6 +1212,12 @@ with tab1:
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+# ================== TAB 3: ANALYSIS RESULTS ==================
+with tab3:
+    if st.session_state.analysis_results:
+        analysis = st.session_state.analysis_results
+        verdict = analysis['final_verdict']
         
         # Scores
         col_s1, col_s2, col_s3 = st.columns(3)
@@ -939,8 +1240,8 @@ with tab1:
             # Quick stats
             st.markdown(f"""
             <div class='glass-card' style='height: 300px;'>
-                <h4 style='color: #1F2937;'>📊 ANALYSIS STATS</h4>
-                <div style='margin-top: 20px;'>
+                <h4 style='color: white;'>📊 ANALYSIS STATS</h4>
+                <div style='margin-top: 20px; color: rgba(255,255,255,0.8);'>
                     <p><strong>Text Length:</strong> {analysis['metadata']['word_count']} words</p>
                     <p><strong>Google Fact Checks:</strong> {analysis['api_checks']['google_fact_check'].get('claims_found', 0)} found</p>
                     <p><strong>Related Articles:</strong> {analysis['api_checks']['news_search'].get('articles_found', 0)} found</p>
@@ -1106,16 +1407,27 @@ with tab1:
                 • Look for corroborating evidence
                 • Consult domain experts if important
                 """)
+    else:
+        st.markdown("""
+        <div class='glass-card' style='text-align: center; padding: 60px 40px;'>
+            <div style='font-size: 4rem; margin-bottom: 20px;'>📊</div>
+            <h3 style='color: white;'>No Analysis Results Yet</h3>
+            <p style='color: rgba(255,255,255,0.7);'>
+                Upload a file or enter text in the previous tabs to get analysis results.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
-with tab2:
-    st.markdown("<div class='glass-card'><h2 style='margin-top: 0; color: #1F2937;'>📊 SYSTEM ANALYTICS</h2></div>", unsafe_allow_html=True)
+# ================== TAB 4: SYSTEM INFORMATION ==================
+with tab4:
+    st.markdown("<div class='glass-card'><h2 style='margin-top: 0; color: white;'>⚙ SYSTEM INFORMATION</h2></div>", unsafe_allow_html=True)
     
     # System Status
     col_s1, col_s2, col_s3, col_s4 = st.columns(4)
     
     with col_s1:
         st.metric("API Status", "Active" if GOOGLE_API_KEY or NEWSAPI_KEY else "Limited", 
-                 "3 APIs" if GOOGLE_API_KEY and NEWSAPI_KEY else "0 APIs")
+                 "2 APIs" if GOOGLE_API_KEY and NEWSAPI_KEY else "0 APIs")
     
     with col_s2:
         st.metric("ML Models", "Active" if ML_AVAILABLE else "Disabled", 
@@ -1156,96 +1468,66 @@ with tab2:
     
     st.dataframe(pd.DataFrame(api_data), use_container_width=True)
     
-    # Media Bias Database Preview
-    st.subheader("📰 Media Bias Database Preview")
-    if st.checkbox("Show media bias database"):
-        bias_df = pd.DataFrame([
-            {"Source": k.title(), "Bias": v["bias"], "Reliability": v["reliability"], 
-             "Factual Score": v["factual"], "Category": v["category"]}
-            for k, v in list(MEDIA_BIAS_DATABASE.items())[:15]
-        ])
-        st.dataframe(bias_df, use_container_width=True)
-        st.caption(f"Showing 15 of {len(MEDIA_BIAS_DATABASE)} sources")
-
-with tab3:
-    st.markdown("<div class='glass-card'><h2 style='margin-top: 0; color: #1F2937;'>⚙ SYSTEM INFORMATION</h2></div>", unsafe_allow_html=True)
+    # File Support Details
+    st.subheader("📁 File Format Support")
     
-    st.markdown("""
-    ### 🏗️ Architecture
+    file_data = [
+        {"Format": ".txt", "Status": "✅ Full Support", "Features": "Text extraction"},
+        {"Format": ".pdf", "Status": "⚠ Requires PyPDF2", "Features": "Text extraction from PDF"},
+        {"Format": ".docx", "Status": "⚠ Requires python-docx", "Features": "Text extraction from Word"},
+        {"Format": ".csv", "Status": "✅ Full Support", "Features": "Column-based text extraction"}
+    ]
     
-    FactGuard Production uses a multi-layered approach:
+    st.dataframe(pd.DataFrame(file_data), use_container_width=True)
     
-    1. **API Layer**: Real-time verification with external services
-    2. **ML Layer**: Multiple machine learning models for prediction
-    3. **DL Layer**: Deep learning with transformer models
-    4. **Linguistic Layer**: Text analysis and pattern detection
-    5. **Ensemble Layer**: Weighted combination of all signals
-    
-    ### 🔧 Technical Stack
-    
-    - **Backend**: Python, Streamlit
-    - **ML/ML**: Scikit-learn, Transformers, PyTorch
-    - **APIs**: Google Fact Check, NewsAPI
-    - **Media Bias**: Comprehensive database (40+ sources)
-    - **Visualization**: Plotly, Matplotlib
-    - **Deployment**: Streamlit Cloud, Docker-ready
-    
-    ### 📊 Performance Metrics
-    
-    - **Accuracy**: 85-92% on test datasets
-    - **Speed**: 3-5 seconds per analysis
-    - **Scalability**: Handles 1000+ requests/hour
-    - **Uptime**: 99.9% (with proper API keys)
-    
-    ### 🔐 Security & Privacy
-    
-    - No user data storage
-    - API keys encrypted
-    - All processing in-memory
-    - GDPR compliant design
-    """)
-    
-    # Setup Instructions
-    with st.expander("🔧 Setup Instructions"):
+    # Technical Information
+    with st.expander("🔧 Technical Specifications"):
         st.markdown("""
-        ### To run this system locally:
+        ### 🏗️ Architecture Overview
         
-        1. **Install dependencies:**
-        ```bash
-        pip install streamlit pandas numpy requests scikit-learn transformers torch newsapi-python python-dotenv plotly
-        ```
+        FactGuard Production uses a multi-layered approach:
         
-        2. **Get API keys:**
-        - [Google Fact Check Tools API](https://developers.google.com/fact-check/tools/api)
-        - [NewsAPI](https://newsapi.org)
+        1. **Input Layer**: Multiple input methods (text, file upload)
+        2. **API Layer**: Real-time verification with external services
+        3. **ML Layer**: Multiple machine learning models for prediction
+        4. **DL Layer**: Deep learning with transformer models
+        5. **Linguistic Layer**: Text analysis and pattern detection
+        6. **Ensemble Layer**: Weighted combination of all signals
         
-        3. **Create .streamlit/secrets.toml:**
-        ```toml
-        GOOGLE_API_KEY = "your_google_api_key_here"
-        NEWSAPI_KEY = "your_newsapi_key_here"
-        MEDIA_BIAS_API_KEY = ""  # Optional, uses built-in database
-        ```
+        ### 🔧 Technical Stack
         
-        4. **Run the app:**
-        ```bash
-        streamlit run app.py
-        ```
+        - **Backend**: Python, Streamlit
+        - **ML/ML**: Scikit-learn, Transformers, PyTorch
+        - **APIs**: Google Fact Check, NewsAPI
+        - **Media Bias**: Comprehensive database (40+ sources)
+        - **Visualization**: Plotly, Matplotlib
+        - **Deployment**: Streamlit Cloud, Docker-ready
         
-        5. **For Streamlit Cloud:**
-        - Add secrets in dashboard settings
-        - Deploy from GitHub repository
+        ### 📊 Performance Metrics
+        
+        - **Accuracy**: 85-92% on test datasets
+        - **Speed**: 3-5 seconds per analysis
+        - **Scalability**: Handles 1000+ requests/hour
+        - **Uptime**: 99.9% (with proper API keys)
+        
+        ### 🔐 Security & Privacy
+        
+        - No user data storage
+        - API keys encrypted
+        - All processing in-memory
+        - GDPR compliant design
         """)
 
 # ================== FOOTER ==================
 st.markdown(f"""
-<div style='text-align: center; padding: 40px 0 20px 0; color: white;'>
-    <div style='font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;'>
-        🤖 FACTGUARD PRODUCTION v3.0
+<div style='text-align: center; padding: 40px 0 20px 0; color: rgba(255,255,255,0.8);'>
+    <div style='font-size: 1.3rem; font-weight: 700; margin-bottom: 10px;' class='gradient-text'>
+        🛡️ FACTGUARD PRODUCTION v4.0
     </div>
     <p style='font-size: 0.95rem; opacity: 0.9;'>
-        Real APIs • Machine Learning • Deep Learning • Comprehensive Media Bias Database
+        Multi-Input • Real APIs • Machine Learning • Deep Learning • Media Bias Database
     </p>
-    <div style='margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);'>
+    <div style='margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);'>
         <p style='font-size: 0.9em; opacity: 0.8;'>
             Developed by: <strong>Hadia Akbar (042)</strong> | <strong>Maira Shahid (062)</strong>
         </p>
