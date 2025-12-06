@@ -1015,7 +1015,7 @@ st.markdown("""
 
 <div class='factguard-header'>
     <div class='logo-container'>
-        <img src='./assets/logo.png' class='logo-img' alt='FactGuard Logo'>
+        <img src='assets/logo.png' class='logo-img' alt='FactGuard Logo'>
     </div>
     
     <h1 style='font-size: 3.8rem; margin-bottom: 5px; text-align: center; font-weight: 800;' class='header-gradient'>
