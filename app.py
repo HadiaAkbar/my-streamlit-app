@@ -1531,8 +1531,6 @@ with tab4:
                         
                     </div>
                 </div>
-            </div>
-        </div>
         """, unsafe_allow_html=True)
         
         # Score Gauges
