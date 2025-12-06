@@ -19,173 +19,59 @@ import warnings
 import io
 warnings.filterwarnings('ignore')
 
-# ================== LOADING/SPLASH SCREEN ==================
-# Add this RIGHT AFTER YOUR IMPORTS but BEFORE THEME and everything else
-
-# Check if this is the first time the app is loading
+# ================== SIMPLE LOADING SCREEN ==================
 if 'app_loaded' not in st.session_state:
     st.session_state.app_loaded = False
 
-# If app hasn't loaded yet, show loading screen
 if not st.session_state.app_loaded:
-    # Use columns to create a centered loading screen without set_page_config
-    col1, col2, col3 = st.columns([1, 2, 1])
-    
-    with col2:
-        # Create loading screen HTML
-        loading_html = """
+    # Create a simple centered loading screen
+    st.markdown("""
+    <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+        text-align: center;
+        padding: 20px;
+    ">
+        <img src="assets/logo.png" alt="FactGuard Logo" style="height: 100px; width: auto; margin-bottom: 20px;">
+        <h1 style="color: #3B82F6; font-size: 2.5rem; margin-bottom: 10px;">
+            FACTGUARD PRODUCTION v3.0
+        </h1>
+        <p style="color: #CBD5E1; font-size: 1.2rem; margin-bottom: 30px;">
+            AI-Powered Fact Verification Platform
+        </p>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div style="width: 12px; height: 12px; background: #3B82F6; border-radius: 50%; animation: bounce 1.4s infinite;"></div>
+            <div style="width: 12px; height: 12px; background: #3B82F6; border-radius: 50%; animation: bounce 1.4s infinite 0.2s;"></div>
+            <div style="width: 12px; height: 12px; background: #3B82F6; border-radius: 50%; animation: bounce 1.4s infinite 0.4s;"></div>
+        </div>
+        <p style="color: #94A3B8; font-size: 1rem; margin-top: 20px;">
+            Prepared by: <strong style="color: #F8FAFC;">Hadia Akbar (042)</strong> & 
+            <strong style="color: #F8FAFC;">Maira Shahid (062)</strong>
+        </p>
         <style>
-            .loading-container {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            }
-            
-            .logo-pulse {
-                animation: pulse 2s infinite;
-                margin-bottom: 30px;
-            }
-            
-            @keyframes pulse {
-                0% { transform: scale(1); opacity: 1; }
-                50% { transform: scale(1.05); opacity: 0.8; }
-                100% { transform: scale(1); opacity: 1; }
-            }
-            
-            .loading-text {
-                color: #3B82F6;
-                font-size: 2.5rem;
-                font-weight: 800;
-                margin-bottom: 20px;
-                background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                text-align: center;
-            }
-            
-            .team-info {
-                color: #CBD5E1;
-                font-size: 1.2rem;
-                margin-top: 40px;
-                text-align: center;
-                line-height: 1.6;
-            }
-            
-            .loading-dots {
-                display: flex;
-                justify-content: center;
-                margin-top: 30px;
-            }
-            
-            .dot {
-                width: 12px;
-                height: 12px;
-                margin: 0 5px;
-                background-color: #3B82F6;
-                border-radius: 50%;
-                animation: bounce 1.4s infinite ease-in-out both;
-            }
-            
-            .dot:nth-child(1) { animation-delay: -0.32s; }
-            .dot:nth-child(2) { animation-delay: -0.16s; }
-            
             @keyframes bounce {
                 0%, 80%, 100% { transform: scale(0); }
                 40% { transform: scale(1); }
             }
-            
-            .progress-bar {
-                width: 300px;
-                height: 4px;
-                background: rgba(59, 130, 246, 0.2);
-                border-radius: 2px;
-                margin-top: 20px;
-                overflow: hidden;
-            }
-            
-            .progress-fill {
-                height: 100%;
-                background: linear-gradient(90deg, #3B82F6, #8B5CF6);
-                animation: progress 3s ease-in-out;
-                border-radius: 2px;
-            }
-            
-            @keyframes progress {
-                0% { width: 0%; }
-                100% { width: 100%; }
-            }
         </style>
-        
-        <div class="loading-container">
-            <div class="logo-pulse">
-                <img src="assets/logo.png" alt="FactGuard Logo" style="height: 120px; width: auto;">
-            </div>
-            
-            <div class="loading-text">
-                FACTGUARD PRODUCTION v3.0
-            </div>
-            
-            <div class="loading-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-            
-            <div class="team-info">
-                <div>AI-Powered Fact Verification Platform</div>
-                <div style="margin-top: 30px; font-size: 1rem; color: #94A3B8;">
-                    Prepared by:<br>
-                    <strong style="color: #F8FAFC;">Hadia Akbar (042)</strong> & 
-                    <strong style="color: #F8FAFC;">Maira Shahid (062)</strong>
-                </div>
-                <div style="margin-top: 20px; font-size: 0.9rem; color: #64748B;">
-                    Loading advanced AI models and APIs...
-                </div>
-            </div>
-        </div>
-        """
-        
-        # Display the loading screen
-        st.markdown(loading_html, unsafe_allow_html=True)
-        
-        # Force the page to update
-        st.empty()
-        
-        # Wait for 3 seconds
-        time.sleep(3)
-        
-        # Mark app as loaded
-        st.session_state.app_loaded = True
-        
-        # Clear the loading screen
-        st.empty()
-        
-        # Rerun to show main app
-        st.rerun()
+    </div>
+    """, unsafe_allow_html=True)
+    
+    time.sleep(3)
+    st.session_state.app_loaded = True
+    st.rerun()
 
-# ================== SET PAGE CONFIG (MUST BE ONLY ONCE) ==================
-# Remove the other st.set_page_config() calls from your code
+# ================== SET PAGE CONFIG ==================
 st.set_page_config(
     page_title="FactGuard AI - Real API Version",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-
-
 
 # ================== API KEYS ==================
 # Configure in Streamlit Cloud Secrets
