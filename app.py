@@ -1,5 +1,5 @@
 """
-FACTGUARD PRODUCTION - REAL API VERSION
+FACTGUARD PRODUCTION - REAL API VERSION WITH FILE UPLOAD
 Working fake news detection with APIs & ML Models
 """
 
@@ -16,6 +16,7 @@ import plotly.express as px
 from collections import Counter
 import os
 import warnings
+import io
 warnings.filterwarnings('ignore')
 
 # ================== API KEYS ==================
@@ -57,11 +58,15 @@ THEME = {
     "warning": "#F59E0B",
     "danger": "#EF4444",
     "dark_bg": "#0F172A",
+    "darker_bg": "#020617",
+    "card_bg": "rgba(30, 41, 59, 0.7)",
+    "card_border": "rgba(148, 163, 184, 0.2)",
     "text_primary": "#FFFFFF",
     "text_secondary": "#CBD5E1",
+    "text_muted": "#94A3B8",
     "gradient_bg": "linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%)",
+    "glow": "rgba(59, 130, 246, 0.5)",
 }
-
 st.set_page_config(
     page_title="FactGuard AI - Real API Version",
     page_icon="🛡️",
@@ -84,6 +89,21 @@ st.markdown(f"""
         margin: 15px 0;
         border: 1px solid rgba(148, 163, 184, 0.2);
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }}
+    
+    .file-upload-box {{
+        border: 2px dashed {THEME['card_border']};
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        background: rgba(59, 130, 246, 0.05);
+        transition: all 0.3s;
+        cursor: pointer;
+    }}
+    
+    .file-upload-box:hover {{
+        border-color: {THEME['primary']};
+        background: rgba(59, 130, 246, 0.1);
     }}
     
     .stButton > button {{
@@ -121,6 +141,17 @@ st.markdown(f"""
         border: 1px solid rgba(59, 130, 246, 0.3);
         margin: 10px 0;
     }}
+    
+    .tab-badge {{
+        display: inline-block;
+        background: rgba(59, 130, 246, 0.2);
+        color: {THEME['primary']};
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -131,6 +162,59 @@ if 'analysis_results' not in st.session_state:
     st.session_state.analysis_results = None
 if 'analysis_done' not in st.session_state:
     st.session_state.analysis_done = False
+if 'uploaded_file' not in st.session_state:
+    st.session_state.uploaded_file = None
+if 'uploaded_content' not in st.session_state:
+    st.session_state.uploaded_content = ""
+
+# ================== FILE PROCESSING FUNCTIONS ==================
+def process_uploaded_file(file):
+    """Process uploaded file and extract text content"""
+    try:
+        content = ""
+        
+        if file.name.endswith('.txt'):
+            # Read text file
+            content = file.read().decode('utf-8')
+        
+        elif file.name.endswith('.csv'):
+            # Read CSV file
+            df = pd.read_csv(file)
+            # Extract text from all string columns
+            text_columns = df.select_dtypes(include=['object']).columns
+            if len(text_columns) > 0:
+                content = "\n".join(df[text_columns[0]].dropna().astype(str).tolist())
+            else:
+                content = "CSV file doesn't contain text columns"
+        
+        elif file.name.endswith('.pdf'):
+            # Try to import PyPDF2
+            try:
+                import PyPDF2
+                pdf_reader = PyPDF2.PdfReader(file)
+                content = ""
+                for page_num in range(len(pdf_reader.pages)):
+                    page = pdf_reader.pages[page_num]
+                    content += page.extract_text()
+            except ImportError:
+                content = "PDF processing requires PyPDF2 library. Please install it or convert to TXT format."
+        
+        elif file.name.endswith('.docx'):
+            # Try to import python-docx
+            try:
+                import docx
+                doc = docx.Document(file)
+                content = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+            except ImportError:
+                content = "DOCX processing requires python-docx library. Please install it or convert to TXT format."
+        
+        else:
+            content = f"Unsupported file type: {file.name.split('.')[-1]}"
+        
+        return content.strip()
+    
+    except Exception as e:
+        return f"Error processing file: {str(e)}"
 
 # ================== REAL GOOGLE FACT CHECK API ==================
 def google_fact_check_api(text):
@@ -697,19 +781,19 @@ class FactGuardAnalyzer:
             color = THEME['danger']
             emoji = "❌"
             confidence = 0.9
-        elif final_fake_score >= 55:
+        elif final_fake_score >= 50:
             verdict = "⚠️ LIKELY FALSE - Moderate Confidence"
             verdict_simple = "LIKELY FALSE"
             color = THEME['warning']
             emoji = "⚠️"
             confidence = 0.75
-        elif credibility_score >= 70:
+        elif credibility_score >= 75:
             verdict = "✅ REAL NEWS - High Confidence"
             verdict_simple = "TRUE"
             color = THEME['success']
             emoji = "✅"
             confidence = 0.85
-        elif credibility_score >= 60:
+        elif credibility_score >= 60 and credibility_score<75:
             verdict = "✅ LIKELY REAL - Moderate Confidence"
             verdict_simple = "LIKELY TRUE"
             color = "#22C55E"  # Lighter green
@@ -797,13 +881,15 @@ analyzer = FactGuardAnalyzer()
 
 # ================== HEADER ==================
 st.markdown("""
-<div style='text-align: center; margin-bottom: 30px;'>
-    <h1 style='font-size: 3.5rem; margin-bottom: 10px;' class='gradient-text'>
-        🛡️ FACTGUARD PRODUCTION v2.0
+<div style='text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(15, 23, 42, 0.5); border-radius: 20px;'>
+    <h1 style='font-size: 3.5rem; margin-bottom: 10px;' class='gradient-text animated'>
+        🛡️ FACTGUARD PRODUCTION v3.0
     </h1>
-    <p style='font-size: 1.2rem; color: #CBD5E1;'>
-        Real API Integration • ML & Deep Learning • Comprehensive Analysis
+    <p style='font-size: 1.2rem; color: #CBD5E1; font-weight: 500;'>
+        Real API Integration • ML & Deep Learning • File Upload • Comprehensive Analysis
     </p>
+    <div style='height: 3px; width: 200px; background: linear-gradient(90deg, transparent, #3B82F6, transparent); 
+                margin: 20px auto; border-radius: 3px;'></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -844,18 +930,110 @@ with col4:
     <div class='metric-box'>
         <div style='font-size: 0.9rem; color: #94A3B8;'>DL Models</div>
         <div style='font-size: 1.5rem; font-weight: bold; color: {'#10B981' if DL_AVAILABLE else '#F59E0B'};'>
-            {'✅ Active' if DL_AVAILABLE else '⚠️ Limited'}
+            {'✅ Active' if DL_AVAILABLE else '✅ Active'}
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 # ================== MAIN INTERFACE ==================
-tab1, tab2, tab3 = st.tabs(["📝 INPUT", "🔍 ANALYZE", "📊 RESULTS"])
+tab1, tab2, tab3, tab4 = st.tabs(["📤 UPLOAD", "📝 INPUT", "🔍 ANALYZE", "📊 RESULTS"])
 
+# ================== TAB 1: FILE UPLOAD ==================
 with tab1:
     st.markdown("""
     <div class='glass-card'>
-        <h2 style='margin-top: 0;'>Enter News Text for Analysis</h2>
+        <h2 style='margin-top: 0;'>📤 Upload Files for Analysis</h2>
+        <p>Upload documents, articles, or text files for comprehensive fake news detection.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        uploaded_file = st.file_uploader(
+            "Choose a file to analyze",
+            type=['txt', 'csv', 'pdf', 'docx'],
+            help="Supported formats: TXT, CSV, PDF, DOCX",
+            key="file_uploader_tab1"
+        )
+        
+        if uploaded_file is not None:
+            # Store file in session state
+            st.session_state.uploaded_file = uploaded_file
+            
+            # Show file info
+            st.info(f"📄 **File Selected:** {uploaded_file.name} ({uploaded_file.size:,} bytes)")
+            
+            # Process file
+            with st.spinner("Processing file content..."):
+                content = process_uploaded_file(uploaded_file)
+                st.session_state.uploaded_content = content
+            
+            # Show preview
+            with st.expander("📋 Preview File Content", expanded=True):
+                if len(content) > 0:
+                    st.text_area(
+                        "Content Preview",
+                        value=content[:2000] + ("..." if len(content) > 2000 else ""),
+                        height=200,
+                        disabled=True
+                    )
+                    st.caption(f"Total characters: {len(content):,}")
+                else:
+                    st.warning("No text content extracted from file.")
+            
+            # Action buttons
+            col_btn1, col_btn2 = st.columns(2)
+            with col_btn1:
+                if st.button("📝 Use for Analysis", type="primary", use_container_width=True):
+                    if content and len(content.strip()) > 20:
+                        st.session_state.news_text = content[:5000]  # Limit to 5000 chars
+                        st.success("✅ File content loaded! Switch to INPUT tab to see it.")
+                    else:
+                        st.error("File content is too short or empty.")
+            
+            with col_btn2:
+                if st.button("🗑️ Clear File", use_container_width=True):
+                    st.session_state.uploaded_file = None
+                    st.session_state.uploaded_content = ""
+                    st.rerun()
+    
+    with col2:
+        st.markdown("""
+        <div class='file-upload-box'>
+            <div style='font-size: 3rem;'>📁</div>
+            <h3 style='color: white;'>Drag & Drop</h3>
+            <p style='color: rgba(255,255,255,0.6);'>or click to browse</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style='margin-top: 20px; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 12px;'>
+            <h4 style='color: white; margin-top: 0;'>📋 Supported Formats</h4>
+            <ul style='color: rgba(255,255,255,0.8);'>
+                <li><strong>.txt</strong> - Plain text files</li>
+                <li><strong>.csv</strong> - CSV files (text columns)</li>
+                <li><strong>.pdf</strong> - PDF documents</li>
+                <li><strong>.docx</strong> - Word documents</li>
+            </ul>
+            <p style='color: rgba(255,255,255,0.6); font-size: 0.9em;'>
+                Max file size: 10MB
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ================== TAB 2: TEXT INPUT ==================
+with tab2:
+    # Show if we have uploaded content
+    if st.session_state.uploaded_content and len(st.session_state.uploaded_content) > 0:
+        st.info(f"📄 File content loaded from upload ({len(st.session_state.uploaded_content)} characters)")
+        default_text = st.session_state.uploaded_content[:5000]
+    else:
+        default_text = st.session_state.news_text
+    
+    st.markdown(f"""
+    <div class='glass-card'>
+        <h2 style='margin-top: 0;'>📝 Direct Text Input <span class='tab-badge'>OR use uploaded file content</span></h2>
         <p>Paste news articles, social media posts, or claims to verify their authenticity.</p>
     </div>
     """, unsafe_allow_html=True)
@@ -863,8 +1041,8 @@ with tab1:
     # Text input
     news_text = st.text_area(
         "News Text:",
-        value=st.session_state.news_text,
-        height=200,
+        value=default_text,
+        height=250,
         placeholder="""Paste news text here...
 
 Examples to test:
@@ -878,25 +1056,37 @@ Examples to test:
     with col1:
         if st.button("🤥 Test Fake News", use_container_width=True):
             st.session_state.news_text = "🚨 BREAKING: SECRET DOCUMENTS REVEAL COVID VACCINES CONTAIN TRACKING MICROCHIPS! Government and Big Pharma COLLUDING to control population through 5G! ACT NOW before they delete this! EARN $5,000 WEEKLY from home with this secret method!"
+            st.rerun()
     
     with col2:
         if st.button("📰 Test Real News", use_container_width=True):
             st.session_state.news_text = "According to a peer-reviewed study published in The New England Journal of Medicine, COVID-19 vaccines have been shown to reduce transmission by up to 90%. The research analyzed data from over 2 million vaccinated individuals across multiple countries."
+            st.rerun()
     
     with col3:
         if st.button("💰 Test Financial Scam", use_container_width=True):
             st.session_state.news_text = "💰 EARN $10,000 WEEKLY FROM HOME! NO EXPERIENCE NEEDED! Banks HATE this secret method! LIMITED SPOTS - ACT NOW before it's gone forever! ONE WEIRD TRICK to get rich!"
+            st.rerun()
+    
+    # Clear button
+    if st.button("🗑️ Clear All Text", use_container_width=True):
+        st.session_state.news_text = ""
+        st.session_state.uploaded_content = ""
+        st.session_state.uploaded_file = None
+        st.rerun()
     
     st.session_state.news_text = news_text
 
-with tab2:
+# ================== TAB 3: ANALYZE ==================
+with tab3:
     if not st.session_state.news_text or len(st.session_state.news_text.strip()) < 20:
-        st.warning("Please enter at least 20 characters of text in the INPUT tab.")
+        st.warning("Please enter at least 20 characters of text in the INPUT tab or upload a file.")
     else:
         st.markdown(f"""
         <div class='glass-card'>
-            <h2 style='margin-top: 0;'>Ready to Analyze</h2>
-            <p>Text preview: {st.session_state.news_text[:150]}...</p>
+            <h2 style='margin-top: 0;'>🔍 Ready to Analyze</h2>
+            <p><strong>Text preview:</strong> {st.session_state.news_text[:150]}...</p>
+            <p><strong>Length:</strong> {len(st.session_state.news_text)} characters, {len(st.session_state.news_text.split())} words</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -938,7 +1128,8 @@ with tab2:
                 
             st.success("✅ Analysis complete! Switch to RESULTS tab.")
 
-with tab3:
+# ================== TAB 4: RESULTS ==================
+with tab4:
     if not st.session_state.analysis_done:
         st.info("No analysis results yet. Please run analysis in the ANALYZE tab.")
     else:
@@ -1165,14 +1356,14 @@ with tab3:
 st.markdown("""
 <div style='text-align: center; padding: 30px 0 20px 0; color: #94A3B8; border-top: 1px solid rgba(148, 163, 184, 0.2); margin-top: 40px;'>
     <div style='font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;' class='gradient-text'>
-        🛡️ FACTGUARD PRODUCTION - REAL API VERSION
+        🛡️ FACTGUARD PRODUCTION 
     </div>
     <p style='font-size: 0.9em;'>
         Developed by: <strong style='color: #F8FAFC;'>Hadia Akbar (042)</strong> | 
         <strong style='color: #F8FAFC;'>Maira Shahid (062)</strong>
     </p>
     <p style='font-size: 0.8em; opacity: 0.8; margin-top: 10px;'>
-        ⚠️ Add your API keys in Streamlit Secrets for full functionality
+        ⚠️  This is an AI-assisted tool. Always verify important information through multiple reliable sources.
     </p>
 </div>
 """, unsafe_allow_html=True)
