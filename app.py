@@ -893,12 +893,7 @@ st.markdown("""
     <p style="color: #CBD5E1; font-size: 1.1rem; margin-bottom: 20px;">
         AI-Powered Fact Verification Platform
     </p>
-    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ Google API</span>
-        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ NewsAPI</span>
-        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ ML Models</span>
-        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ DL Models</span>
-    </div>
+    
 </div>
 """, unsafe_allow_html=True)
 
