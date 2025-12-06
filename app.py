@@ -37,7 +37,7 @@ if not st.session_state.app_loaded:
         text-align: center;
         padding: 20px;
     ">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNLC6eTCnlwaibKJwFo_jmC_Z0aC7zHhz8oA&s" alt="FactGuard Logo" style="max-height: 120px; width: auto; max-width: 100%;">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiiQCSM0hXt05fmfWBYlgpZx4cfz_02s5hWQ&s" alt="FactGuard Logo" style="max-height: 120px; width: auto; max-width: 100%;">
         <h1 style="color: #3B82F6; font-size: 2.5rem; margin-bottom: 10px;">
             FACTGUARD PRODUCTION v3.0
         </h1>
