@@ -890,176 +890,36 @@ def create_comparison_chart(ml_predictions):
 analyzer = FactGuardAnalyzer()
 
 # ================== HEADER ==================
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-    
-    .factguard-header {
-        font-family: 'Inter', sans-serif;
-        position: relative;
-        overflow: hidden;
-        border-radius: 24px;
-        padding: 40px 30px;
-        margin-bottom: 40px;
-        background: linear-gradient(135deg, 
-            rgba(15, 23, 42, 0.85) 0%, 
-            rgba(30, 41, 59, 0.9) 50%, 
-            rgba(15, 23, 42, 0.85) 100%);
-        border: 1px solid rgba(59, 130, 246, 0.25);
-        box-shadow: 
-            0 20px 40px rgba(0, 0, 0, 0.4),
-            0 0 60px rgba(59, 130, 246, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-    }
-    
-    .header-gradient {
-        background: linear-gradient(90deg, 
-            #3B82F6 0%, 
-            #8B5CF6 25%, 
-            #EC4899 50%, 
-            #F59E0B 75%, 
-            #10B981 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
-        animation: shimmer 3s infinite;
-        background-size: 200% auto;
-    }
-    
-    @keyframes shimmer {
-        0% { background-position: 0% center; }
-        50% { background-position: 100% center; }
-        100% { background-position: 0% center; }
-    }
-    
-    .logo-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 25px;
-        gap: 20px;
-    }
-    
-    .logo-img {
-        height: 80px;
-        width: auto;
-        filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-        0% { filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4)); }
-        50% { filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8)); }
-        100% { filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.4)); }
-    }
-    
-    .version-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #3B82F6, #1D4ED8);
-        color: white;
-        padding: 6px 16px;
-        border-radius: 50px;
-        font-size: 0.9rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        margin-left: 15px;
-        vertical-align: middle;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-    
-    .tagline {
-        font-size: 1.3rem;
-        color: #E2E8F0;
-        margin-top: 15px;
-        font-weight: 400;
-        letter-spacing: 0.5px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    
-    .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-        margin-top: 30px;
-        padding: 0 20px;
-    }
-    
-    .feature-item {
-        background: rgba(30, 41, 59, 0.6);
-        padding: 12px 15px;
-        border-radius: 12px;
-        text-align: center;
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #CBD5E1;
-        border: 1px solid rgba(59, 130, 246, 0.2);
-        transition: all 0.3s ease;
-    }
-    
-    .feature-item:hover {
-        transform: translateY(-3px);
-        border-color: rgba(59, 130, 246, 0.5);
-        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
-    }
-    
-    .feature-item.active {
-        color: #10B981;
-        border-color: rgba(16, 185, 129, 0.3);
-        background: rgba(16, 185, 129, 0.1);
-    }
-    
-    .glow-line {
-        height: 2px;
-        width: 80%;
-        margin: 25px auto;
-        background: linear-gradient(90deg, 
-            transparent 0%, 
-            rgba(59, 130, 246, 0.8) 50%, 
-            transparent 100%);
-        border-radius: 2px;
-    }
-</style>
+# ================== HEADER ==================
+# SIMPLIFIED VERSION - This will definitely work
 
-<div class='factguard-header'>
-    <div class='logo-container'>
-        <img src='assets/logo.png' class='logo-img' alt='FactGuard Logo'>
-    </div>
-    
-    <h1 style='font-size: 3.8rem; margin-bottom: 5px; text-align: center; font-weight: 800;' class='header-gradient'>
-        FACTGUARD PRODUCTION 
-        <span class='version-badge'>v3.0</span>
+# First, display logo using Streamlit
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    try:
+        # Display logo using st.image
+        st.image("assets/logo.png", width=100)
+    except:
+        st.markdown("<div style='font-size: 4rem; text-align: center;'>🛡️</div>", unsafe_allow_html=True)
+
+# Now the header text
+st.markdown("""
+<div style='text-align: center; padding: 30px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%); border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.3); margin-bottom: 30px;'>
+    <h1 style='background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 3.5rem; font-weight: 900; margin-bottom: 10px;'>
+        FACTGUARD PRODUCTION <span style='background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: white; padding: 5px 15px; border-radius: 20px; font-size: 1rem; margin-left: 10px;'>v3.0</span>
     </h1>
-    
-    <p class='tagline'>
+    <p style='color: #CBD5E1; font-size: 1.2rem; margin-bottom: 20px;'>
         AI-Powered Fact Verification Platform with Real-Time Analysis & Multi-Model Intelligence
     </p>
-    
-    <div class='glow-line'></div>
-    
-    <div class='feature-grid'>
-        <div class='feature-item active'>✓ Google Fact Check API</div>
-        <div class='feature-item active'>✓ NewsAPI Integration</div>
-        <div class='feature-item active'>✓ ML Models</div>
-        <div class='feature-item active'>✓ DL Models</div>
+    <div style='height: 2px; width: 80%; margin: 0 auto 20px; background: linear-gradient(90deg, transparent, #3B82F6, transparent);'></div>
+    <div style='display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;'>
+        <span style='background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.3);'>✓ Google Fact Check API</span>
+        <span style='background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.3);'>✓ NewsAPI Integration</span>
+        <span style='background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.3);'>✓ ML Models</span>
+        <span style='background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.3);'>✓ DL Models</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-
-# ================== STATUS BAR ==================
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.markdown(f"""
-    <div class='metric-box'>
-        <div style='font-size: 0.9rem; color: #94A3B8;'>Google Fact Check</div>
-        <div style='font-size: 1.5rem; font-weight: bold; color: {'#10B981' if GOOGLE_API_KEY else '#F59E0B'};'>
-            {'✅ Active' if GOOGLE_API_KEY else '⚠️ Demo'}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
 
 with col2:
     st.markdown(f"""
