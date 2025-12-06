@@ -1556,18 +1556,21 @@ with tab4:
             <div class='glass-card' style='height: 280px;'>
                 <h4>📊 Component Analysis</h4>
                 <div style='margin-top: 15px;'>
-                    <p>ML Prediction: <strong>{verdict['scores_breakdown']['ml_score']:.1f}%</strong></p>
+                    <p>ML: <strong>{verdict['component_details']['ml']['score']:.1f}%</strong> 
+                    <small>({verdict['component_details']['ml']['weight']*100:.0f}%)</small></p>
                     
-                    <p>DL Prediction: <strong>{verdict['scores_breakdown']['dl_score']:.1f}%</strong></p>
+                    <p>DL: <strong>{verdict['component_details']['dl']['score']:.1f}%</strong> 
+                    <small>({verdict['component_details']['dl']['weight']*100:.0f}%)</small></p>
                     
-                    <p>Linguistic Analysis: <strong>{verdict['scores_breakdown']['linguistic_score']:.1f}%</strong></p>
-
+                    <p>Linguistic: <strong>{verdict['component_details']['linguistic']['score']:.1f}%</strong> 
+                    <small>({verdict['component_details']['linguistic']['weight']*100:.0f}%)</small></p>
                     
-                    <p>Common Sense: <strong>{verdict['scores_breakdown']['common_sense_score']:.1f}%</strong></p>" 
+                    {"<p>Common Sense: <strong>" + str(verdict['common_sense_score']) + "%</strong> <small>(15%)</small> ⚠️</p>" 
+                    if verdict['common_sense_detected'] else 
+                    "<p>Common Sense: <strong>0%</strong> <small>(0%)</small> ✅</p>"}
                     
-                    
-                    <p>API/Bias: <strong>{verdict['scores_breakdown']['component_details']['api']['score']:.1f}%</strong> 
-                    </p>
+                    <p>API/Bias: <strong>{verdict['component_details']['api']['score']:.1f}%</strong> 
+                    <small>({verdict['component_details']['api']['weight']*100:.0f}%)</small></p>
                 </div>
             </div>
             """, unsafe_allow_html=True)
