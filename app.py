@@ -881,115 +881,23 @@ analyzer = FactGuardAnalyzer()
 
 # ================== HEADER ==================
 # ================== HEADER ==================
-# Clean, working version
+# ULTRA-SIMPLE version that always works
 
-# Test if HTML renders
-st.markdown("<h2 style='color: #3B82F6;'>FactGuard v3.0</h2>", unsafe_allow_html=True)
-
-# Main header container
+# Clear any formatting issues
 st.markdown("""
-<div style='
-    text-align: center; 
-    padding: 40px 30px; 
-    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); 
-    border-radius: 20px; 
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    margin: 20px 0 40px 0;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-'>
-    <!-- Logo Section -->
-    <div style='margin-bottom: 25px;'>
-        <img src='assets/logo.png' style='height: 80px; width: auto;' alt='FactGuard Logo'>
-    </div>
-    
-    <!-- Main Title -->
-    <h1 style='
-        background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899); 
-        -webkit-background-clip: text; 
-        -webkit-text-fill-color: transparent; 
-        background-clip: text; 
-        font-size: 3.5rem; 
-        font-weight: 900; 
-        margin-bottom: 15px;
-        line-height: 1.2;
-    '>
+<div style="text-align: center; padding: 30px; background: #0F172A; border-radius: 15px; margin-bottom: 30px;">
+    <h1 style="color: #3B82F6; font-size: 3rem; margin-bottom: 10px;">
         FACTGUARD PRODUCTION 
-        <span style='
-            background: linear-gradient(135deg, #3B82F6, #1D4ED8); 
-            color: white; 
-            padding: 8px 20px; 
-            border-radius: 50px; 
-            font-size: 1rem; 
-            margin-left: 15px;
-            font-weight: 700;
-        '>v3.0</span>
+        <span style="background: #3B82F6; color: white; padding: 5px 15px; border-radius: 20px; font-size: 1rem; margin-left: 10px;">v3.0</span>
     </h1>
-    
-    <!-- Tagline -->
-    <p style='
-        color: #CBD5E1; 
-        font-size: 1.2rem; 
-        margin-bottom: 25px;
-        line-height: 1.5;
-    '>
-        AI-Powered Fact Verification Platform with Real-Time Analysis & Multi-Model Intelligence
+    <p style="color: #CBD5E1; font-size: 1.1rem; margin-bottom: 20px;">
+        AI-Powered Fact Verification Platform
     </p>
-    
-    <!-- Divider Line -->
-    <div style='
-        height: 2px; 
-        width: 80%; 
-        margin: 0 auto 25px; 
-        background: linear-gradient(90deg, transparent, #3B82F6, transparent);
-    '></div>
-    
-    <!-- Features Grid -->
-    <div style='
-        display: flex; 
-        justify-content: center; 
-        gap: 15px; 
-        flex-wrap: wrap;
-        margin-top: 20px;
-    '>
-        <div style='
-            background: rgba(16, 185, 129, 0.2); 
-            color: #10B981; 
-            padding: 12px 24px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            font-weight: 600;
-            font-size: 1rem;
-        '>✓ Google Fact Check API</div>
-        
-        <div style='
-            background: rgba(16, 185, 129, 0.2); 
-            color: #10B981; 
-            padding: 12px 24px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            font-weight: 600;
-            font-size: 1rem;
-        '>✓ NewsAPI Integration</div>
-        
-        <div style='
-            background: rgba(16, 185, 129, 0.2); 
-            color: #10B981; 
-            padding: 12px 24px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            font-weight: 600;
-            font-size: 1rem;
-        '>✓ ML Models</div>
-        
-        <div style='
-            background: rgba(16, 185, 129, 0.2); 
-            color: #10B981; 
-            padding: 12px 24px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            font-weight: 600;
-            font-size: 1rem;
-        '>✓ DL Models</div>
+    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ Google API</span>
+        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ NewsAPI</span>
+        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ ML Models</span>
+        <span style="background: rgba(16, 185, 129, 0.2); color: #10B981; padding: 8px 16px; border-radius: 8px;">✓ DL Models</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
