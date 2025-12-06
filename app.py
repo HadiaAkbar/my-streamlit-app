@@ -1551,46 +1551,7 @@ with tab4:
                 THEME['danger'] if verdict["fake_score"] > 60 else THEME['warning']
             ), use_container_width=True)
         
-        with col3:
-    st.markdown("""
-    <div class='glass-card' style='height: 280px;'>
-        <h4>📊 Component Analysis</h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Use Streamlit's native markdown with dynamic values
-    comp = verdict['component_details']
-    
-    # Create a container for the content
-    with st.container():
-        st.markdown(f"""
-        <div style='margin-top: 15px; padding: 0 10px;'>
-            <p>ML: <strong>{comp['ml']['score']:.1f}%</strong> 
-            <small>({comp['ml']['weight']*100:.0f}%)</small></p>
-            
-            <p>DL: <strong>{comp['dl']['score']:.1f}%</strong> 
-            <small>({comp['dl']['weight']*100:.0f}%)</small></p>
-            
-            <p>Linguistic: <strong>{comp['linguistic']['score']:.1f}%</strong> 
-            <small>({comp['linguistic']['weight']*100:.0f}%)</small></p>
-        """, unsafe_allow_html=True)
         
-        if verdict['common_sense_detected']:
-            st.markdown(f"""
-            <p>Common Sense: <strong>{verdict['common_sense_score']:.1f}%</strong> 
-            <small>(15%)</small> ⚠️</p>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <p>Common Sense: <strong>0%</strong> 
-            <small>(0%)</small> ✅</p>
-            """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-            <p>API/Bias: <strong>{comp['api']['score']:.1f}%</strong> 
-            <small>({comp['api']['weight']*100:.0f}%)</small></p>
-        </div>
-        """, unsafe_allow_html=True)
         
         # Detailed Analysis
         st.subheader("🔬 Detailed Analysis")
