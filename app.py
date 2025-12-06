@@ -1015,7 +1015,7 @@ st.markdown("""
 
 <div class='factguard-header'>
     <div class='logo-container'>
-        <img src='app/assets/logo.png' class='logo-img' alt='FactGuard Logo'>
+        <img src='./assets/logo.png' class='logo-img' alt='FactGuard Logo'>
     </div>
     
     <h1 style='font-size: 3.8rem; margin-bottom: 5px; text-align: center; font-weight: 800;' class='header-gradient'>
@@ -1037,6 +1037,7 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 # ================== STATUS BAR ==================
 col1, col2, col3, col4 = st.columns(4)
