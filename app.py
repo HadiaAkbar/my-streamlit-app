@@ -18,7 +18,17 @@ import os
 import warnings
 import io
 warnings.filterwarnings('ignore')
+import os
 
+# Debug: Check if logo exists
+logo_path = "assets/logo.png"
+print(f"Current directory: {os.getcwd()}")
+print(f"Looking for logo at: {logo_path}")
+print(f"Logo exists: {os.path.exists(logo_path)}")
+
+# List files in assets directory
+if os.path.exists("assets"):
+    print("Files in assets folder:", os.listdir("assets"))
 # ================== API KEYS ==================
 # Configure in Streamlit Cloud Secrets
 try:
