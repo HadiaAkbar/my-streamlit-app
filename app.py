@@ -1208,7 +1208,6 @@ st.markdown("""
     <p style="color: #CBD5E1; font-size: 1.1rem; margin-bottom: 20px;">
         AI-Powered Fact Verification Platform - Full Component Analysis
     </p>
-    
 </div>
 """, unsafe_allow_html=True)
 
@@ -1496,6 +1495,14 @@ with tab4:
         analysis = st.session_state.analysis_results
         verdict = analysis['final_verdict']
         
+        # Create the common sense HTML part separately
+        common_sense_html = ""
+        if verdict['common_sense_detected']:
+            common_sense_html = """<div style='background: rgba(245, 158, 11, 0.2); padding: 8px 16px; border-radius: 10px;'>
+                                <strong style='color: #F59E0B;'>⚠️ Common Sense:</strong> 
+                                <span style='color: white; font-weight: 800;'> Detected</span>
+                            </div>"""
+        
         # Verdict Card
         st.markdown(f"""
         <div class='glass-card' style='border-left: 8px solid {verdict["color"]}; background: rgba({int(verdict["color"][1:3], 16)}, {int(verdict["color"][3:5], 16)}, {int(verdict["color"][5:7], 16)}, 0.1);'>
@@ -1521,10 +1528,7 @@ with tab4:
                             <strong style='color: #3B82F6;'>Confidence:</strong> 
                             <span style='color: white; font-weight: 800;'> {verdict["confidence"]*100:.1f}%</span>
                         </div>
-                        
-                            <strong style='color: #F59E0B;'>⚠️ Common Sense:</strong> 
-                            <span style='color: white; font-weight: 800;'> Detected</span>
-                        </div>" if verdict['common_sense_detected'] else ""
+                        {common_sense_html}
                     </div>
                 </div>
             </div>
