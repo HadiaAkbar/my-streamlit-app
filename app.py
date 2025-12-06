@@ -1528,7 +1528,7 @@ with tab4:
                             <strong style='color: #3B82F6;'>Confidence:</strong> 
                             <span style='color: white; font-weight: 800;'> {verdict["confidence"]*100:.1f}%</span>
                         </div>
-                        {common_sense_html}
+                        
                     </div>
                 </div>
             </div>
@@ -1552,28 +1552,45 @@ with tab4:
             ), use_container_width=True)
         
         with col3:
+    st.markdown("""
+    <div class='glass-card' style='height: 280px;'>
+        <h4>📊 Component Analysis</h4>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Use Streamlit's native markdown with dynamic values
+    comp = verdict['component_details']
+    
+    # Create a container for the content
+    with st.container():
+        st.markdown(f"""
+        <div style='margin-top: 15px; padding: 0 10px;'>
+            <p>ML: <strong>{comp['ml']['score']:.1f}%</strong> 
+            <small>({comp['ml']['weight']*100:.0f}%)</small></p>
+            
+            <p>DL: <strong>{comp['dl']['score']:.1f}%</strong> 
+            <small>({comp['dl']['weight']*100:.0f}%)</small></p>
+            
+            <p>Linguistic: <strong>{comp['linguistic']['score']:.1f}%</strong> 
+            <small>({comp['linguistic']['weight']*100:.0f}%)</small></p>
+        """, unsafe_allow_html=True)
+        
+        if verdict['common_sense_detected']:
             st.markdown(f"""
-            <div class='glass-card' style='height: 280px;'>
-                <h4>📊 Component Analysis</h4>
-                <div style='margin-top: 15px;'>
-                    <p>ML: <strong>{verdict['component_details']['ml']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['ml']['weight']*100:.0f}%)</small></p>
-                    
-                    <p>DL: <strong>{verdict['component_details']['dl']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['dl']['weight']*100:.0f}%)</small></p>
-                    
-                    <p>Linguistic: <strong>{verdict['component_details']['linguistic']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['linguistic']['weight']*100:.0f}%)</small></p>
-                    
-                    {"<p>Common Sense: <strong>" + str(verdict['common_sense_score']) + "%</strong> <small>(15%)</small> ⚠️</p>" 
-                    if verdict['common_sense_detected'] else 
-                    "<p>Common Sense: <strong>0%</strong> <small>(0%)</small> ✅</p>"}
-                    
-                    <p>API/Bias: <strong>{verdict['component_details']['api']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['api']['weight']*100:.0f}%)</small></p>
-                </div>
-            </div>
+            <p>Common Sense: <strong>{verdict['common_sense_score']:.1f}%</strong> 
+            <small>(15%)</small> ⚠️</p>
             """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <p>Common Sense: <strong>0%</strong> 
+            <small>(0%)</small> ✅</p>
+            """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+            <p>API/Bias: <strong>{comp['api']['score']:.1f}%</strong> 
+            <small>({comp['api']['weight']*100:.0f}%)</small></p>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Detailed Analysis
         st.subheader("🔬 Detailed Analysis")
