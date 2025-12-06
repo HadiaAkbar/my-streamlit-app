@@ -36,7 +36,7 @@ if not st.session_state.app_loaded:
         text-align: center;
         padding: 20px;
     ">
-        <img src="assets/logo.png" alt="FactGuard Logo" style="height: 100px; width: auto; margin-bottom: 20px;">
+        <img src="../assets/logo.png" alt="FactGuard Logo" style="height: 100px; width: auto; margin-bottom: 20px;">
         <h1 style="color: #3B82F6; font-size: 2.5rem; margin-bottom: 10px;">
             FACTGUARD PRODUCTION v3.0
         </h1>
