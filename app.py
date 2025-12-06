@@ -1488,19 +1488,21 @@ with tab3:
             st.success("✅ Analysis complete! Switch to RESULTS tab.")
 
 # ================== TAB 4: RESULTS ==================
+# ================== TAB 4: RESULTS ==================
 with tab4:
     if not st.session_state.analysis_done:
         st.info("No analysis results yet. Please run analysis in the ANALYZE tab.")
     else:
         analysis = st.session_state.analysis_results
         verdict = analysis['final_verdict']
+        comp_details = verdict['component_details']
         
         # Create the common sense HTML part separately
         common_sense_html = ""
         if verdict['common_sense_detected']:
-            common_sense_html = """<div style='background: rgba(245, 158, 11, 0.2); padding: 8px 16px; border-radius: 10px;'>
+            common_sense_html = f"""<div style='background: rgba(245, 158, 11, 0.2); padding: 8px 16px; border-radius: 10px;'>
                                 <strong style='color: #F59E0B;'>⚠️ Common Sense:</strong> 
-                                <span style='color: white; font-weight: 800;'> Detected</span>
+                                <span style='color: white; font-weight: 800;'> Detected ({verdict['common_sense_score']:.1f}%)</span>
                             </div>"""
         
         # Verdict Card
@@ -1552,25 +1554,45 @@ with tab4:
             ), use_container_width=True)
         
         with col3:
+            # FIXED: Use actual values from analysis instead of hardcoded ones
+            ml_score = comp_details.get('ml', {}).get('score', 0)
+            dl_score = comp_details.get('dl', {}).get('score', 0)
+            ling_score = comp_details.get('linguistic', {}).get('score', 0)
+            api_score = comp_details.get('api', {}).get('score', 0)
+            cs_score = comp_details.get('common_sense', {}).get('score', 0)
+            
+            ml_weight = comp_details.get('ml', {}).get('weight', 0.30) * 100
+            dl_weight = comp_details.get('dl', {}).get('weight', 0.25) * 100
+            ling_weight = comp_details.get('linguistic', {}).get('weight', 0.20) * 100
+            api_weight = comp_details.get('api', {}).get('weight', 0.10) * 100
+            cs_weight = comp_details.get('common_sense', {}).get('weight', 0.15) * 100
+            
+            # Adjust API weight if common sense was detected
+            if verdict['common_sense_detected']:
+                cs_weight = 15
+                api_weight = 10  # Reset to default for display
+            else:
+                cs_weight = 0
+            
             st.markdown(f"""
             <div class='glass-card' style='height: 280px;'>
                 <h4>📊 Component Analysis</h4>
                 <div style='margin-top: 15px;'>
-                    <p>ML: <strong>{verdict['component_details']['ml']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['ml']['weight']*100:.0f}%)</small></p>
+                    <p>ML: <strong>{ml_score:.1f}%</strong> 
+                    <small>({ml_weight:.0f}%)</small></p>
                     
-                    <p>DL: <strong>{verdict['component_details']['dl']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['dl']['weight']*100:.0f}%)</small></p>
+                    <p>DL: <strong>{dl_score:.1f}%</strong> 
+                    <small>({dl_weight:.0f}%)</small></p>
                     
-                    <p>Linguistic: <strong>{verdict['component_details']['linguistic']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['linguistic']['weight']*100:.0f}%)</small></p>
+                    <p>Linguistic: <strong>{ling_score:.1f}%</strong> 
+                    <small>({ling_weight:.0f}%)</small></p>
                     
-                    {"<p>Common Sense: <strong>" + str(verdict['common_sense_score']) + "%</strong> <small>(15%)</small> ⚠️</p>" 
+                    {"<p>Common Sense: <strong>" + f"{verdict['common_sense_score']:.1f}%" + "</strong> <small>(" + f"{cs_weight:.0f}%" + ")</small> ⚠️</p>" 
                     if verdict['common_sense_detected'] else 
                     "<p>Common Sense: <strong>0%</strong> <small>(0%)</small> ✅</p>"}
                     
-                    <p>API/Bias: <strong>{verdict['component_details']['api']['score']:.1f}%</strong> 
-                    <small>({verdict['component_details']['api']['weight']*100:.0f}%)</small></p>
+                    <p>API/Bias: <strong>{api_score:.1f}%</strong> 
+                    <small>({api_weight:.0f}%)</small></p>
                 </div>
             </div>
             """, unsafe_allow_html=True)
