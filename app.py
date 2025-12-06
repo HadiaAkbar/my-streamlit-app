@@ -881,206 +881,191 @@ analyzer = FactGuardAnalyzer()
 
 # ================== HEADER ==================
 # ================== HEADER ==================
-# Fixed version with proper alignment
+# Clean, working version
 
-# Create a container for everything
-header_container = st.container()
+# Test if HTML renders
+st.markdown("<h2 style='color: #3B82F6;'>FactGuard v3.0</h2>", unsafe_allow_html=True)
 
-with header_container:
-    # Create columns for centering
-    left_space, center_col, right_space = st.columns([1, 8, 1])
+# Main header container
+st.markdown("""
+<div style='
+    text-align: center; 
+    padding: 40px 30px; 
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); 
+    border-radius: 20px; 
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    margin: 20px 0 40px 0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+'>
+    <!-- Logo Section -->
+    <div style='margin-bottom: 25px;'>
+        <img src='assets/logo.png' style='height: 80px; width: auto;' alt='FactGuard Logo'>
+    </div>
     
-    with center_col:
-        # Logo row - centered
-        logo_col1, logo_col2, logo_col3 = st.columns([1, 1, 1])
-        with logo_col2:
-            try:
-                # Display logo using st.image
-                st.image("assets/logo.png", width=100)
-            except:
-                st.markdown("""
-                <div style='text-align: center;'>
-                    <div style='font-size: 4rem;'>🛡️</div>
-                </div>
-                """, unsafe_allow_html=True)
-        
-        # Main header text
-        st.markdown("""
+    <!-- Main Title -->
+    <h1 style='
+        background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899); 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        background-clip: text; 
+        font-size: 3.5rem; 
+        font-weight: 900; 
+        margin-bottom: 15px;
+        line-height: 1.2;
+    '>
+        FACTGUARD PRODUCTION 
+        <span style='
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8); 
+            color: white; 
+            padding: 8px 20px; 
+            border-radius: 50px; 
+            font-size: 1rem; 
+            margin-left: 15px;
+            font-weight: 700;
+        '>v3.0</span>
+    </h1>
+    
+    <!-- Tagline -->
+    <p style='
+        color: #CBD5E1; 
+        font-size: 1.2rem; 
+        margin-bottom: 25px;
+        line-height: 1.5;
+    '>
+        AI-Powered Fact Verification Platform with Real-Time Analysis & Multi-Model Intelligence
+    </p>
+    
+    <!-- Divider Line -->
+    <div style='
+        height: 2px; 
+        width: 80%; 
+        margin: 0 auto 25px; 
+        background: linear-gradient(90deg, transparent, #3B82F6, transparent);
+    '></div>
+    
+    <!-- Features Grid -->
+    <div style='
+        display: flex; 
+        justify-content: center; 
+        gap: 15px; 
+        flex-wrap: wrap;
+        margin-top: 20px;
+    '>
         <div style='
-            text-align: center; 
-            padding: 30px; 
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%); 
-            border-radius: 20px; 
-            border: 1px solid rgba(59, 130, 246, 0.3); 
-            margin: 20px 0 30px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        '>
-            <h1 style='
-                background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899); 
-                -webkit-background-clip: text; 
-                -webkit-text-fill-color: transparent; 
-                background-clip: text; 
-                font-size: 3.5rem; 
-                font-weight: 900; 
-                margin-bottom: 10px;
-                line-height: 1.2;
-            '>
-                FACTGUARD PRODUCTION 
-                <span style='
-                    background: linear-gradient(135deg, #3B82F6, #1D4ED8); 
-                    color: white; 
-                    padding: 8px 20px; 
-                    border-radius: 50px; 
-                    font-size: 1rem; 
-                    margin-left: 15px;
-                    font-weight: 700;
-                    vertical-align: middle;
-                '>v3.0</span>
-            </h1>
-            
-            <p style='
-                color: #CBD5E1; 
-                font-size: 1.2rem; 
-                margin-bottom: 25px;
-                line-height: 1.5;
-            '>
-                AI-Powered Fact Verification Platform with Real-Time Analysis & Multi-Model Intelligence
-            </p>
-            
-            <div style='
-                height: 2px; 
-                width: 80%; 
-                margin: 0 auto 25px; 
-                background: linear-gradient(90deg, transparent, #3B82F6, transparent);
-            '></div>
-            
-            <div style='
-                display: flex; 
-                justify-content: center; 
-                gap: 15px; 
-                flex-wrap: wrap;
-                margin-top: 20px;
-            '>
-                <span style='
-                    background: rgba(16, 185, 129, 0.2); 
-                    color: #10B981; 
-                    padding: 10px 20px; 
-                    border-radius: 10px; 
-                    border: 1px solid rgba(16, 185, 129, 0.3);
-                    font-weight: 600;
-                    font-size: 0.95rem;
-                '>✓ Google Fact Check API</span>
-                
-                <span style='
-                    background: rgba(16, 185, 129, 0.2); 
-                    color: #10B981; 
-                    padding: 10px 20px; 
-                    border-radius: 10px; 
-                    border: 1px solid rgba(16, 185, 129, 0.3);
-                    font-weight: 600;
-                    font-size: 0.95rem;
-                '>✓ NewsAPI Integration</span>
-                
-                <span style='
-                    background: rgba(16, 185, 129, 0.2); 
-                    color: #10B981; 
-                    padding: 10px 20px; 
-                    border-radius: 10px; 
-                    border: 1px solid rgba(16, 185, 129, 0.3);
-                    font-weight: 600;
-                    font-size: 0.95rem;
-                '>✓ ML Models</span>
-                
-                <span style='
-                    background: rgba(16, 185, 129, 0.2); 
-                    color: #10B981; 
-                    padding: 10px 20px; 
-                    border-radius: 10px; 
-                    border: 1px solid rgba(16, 185, 129, 0.3);
-                    font-weight: 600;
-                    font-size: 0.95rem;
-                '>✓ DL Models</span>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+            background: rgba(16, 185, 129, 0.2); 
+            color: #10B981; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-weight: 600;
+            font-size: 1rem;
+        '>✓ Google Fact Check API</div>
+        
+        <div style='
+            background: rgba(16, 185, 129, 0.2); 
+            color: #10B981; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-weight: 600;
+            font-size: 1rem;
+        '>✓ NewsAPI Integration</div>
+        
+        <div style='
+            background: rgba(16, 185, 129, 0.2); 
+            color: #10B981; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-weight: 600;
+            font-size: 1rem;
+        '>✓ ML Models</div>
+        
+        <div style='
+            background: rgba(16, 185, 129, 0.2); 
+            color: #10B981; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-weight: 600;
+            font-size: 1rem;
+        '>✓ DL Models</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ================== STATUS BAR ==================
-# Add some spacing
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Create the status bar in a container for better control
-status_container = st.container()
+col1, col2, col3, col4 = st.columns(4)
 
-with status_container:
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        status_color = '#10B981' if GOOGLE_API_KEY else '#F59E0B'
-        status_text = '✅ Active' if GOOGLE_API_KEY else '⚠️ Demo'
-        st.markdown(f"""
-        <div style='
-            background: rgba(30, 41, 59, 0.7); 
-            padding: 20px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            text-align: center;
-            height: 100%;
-        '>
-            <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>Google Fact Check</div>
-            <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        status_color = '#10B981' if NEWSAPI_KEY else '#F59E0B'
-        status_text = '✅ Active' if NEWSAPI_KEY else '⚠️ Demo'
-        st.markdown(f"""
-        <div style='
-            background: rgba(30, 41, 59, 0.7); 
-            padding: 20px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            text-align: center;
-            height: 100%;
-        '>
-            <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>NewsAPI</div>
-            <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        status_color = '#10B981' if ML_AVAILABLE else '#EF4444'
-        status_text = '✅ Active' if ML_AVAILABLE else '❌ Disabled'
-        st.markdown(f"""
-        <div style='
-            background: rgba(30, 41, 59, 0.7); 
-            padding: 20px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            text-align: center;
-            height: 100%;
-        '>
-            <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>ML Models</div>
-            <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        status_color = '#10B981' if DL_AVAILABLE else '#F59E0B'
-        status_text = '✅ Active' if DL_AVAILABLE else '✅ Active'
-        st.markdown(f"""
-        <div style='
-            background: rgba(30, 41, 59, 0.7); 
-            padding: 20px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            text-align: center;
-            height: 100%;
-        '>
-            <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>DL Models</div>
-            <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
-        </div>
-        """, unsafe_allow_html=True)
+with col1:
+    status_color = '#10B981' if GOOGLE_API_KEY else '#F59E0B'
+    status_text = '✅ Active' if GOOGLE_API_KEY else '⚠️ Demo'
+    st.markdown(f"""
+    <div style='
+        background: rgba(30, 41, 59, 0.7); 
+        padding: 20px; 
+        border-radius: 15px; 
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        text-align: center;
+        margin-bottom: 20px;
+    '>
+        <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>Google Fact Check</div>
+        <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    status_color = '#10B981' if NEWSAPI_KEY else '#F59E0B'
+    status_text = '✅ Active' if NEWSAPI_KEY else '⚠️ Demo'
+    st.markdown(f"""
+    <div style='
+        background: rgba(30, 41, 59, 0.7); 
+        padding: 20px; 
+        border-radius: 15px; 
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        text-align: center;
+        margin-bottom: 20px;
+    '>
+        <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>NewsAPI</div>
+        <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    status_color = '#10B981' if ML_AVAILABLE else '#EF4444'
+    status_text = '✅ Active' if ML_AVAILABLE else '❌ Disabled'
+    st.markdown(f"""
+    <div style='
+        background: rgba(30, 41, 59, 0.7); 
+        padding: 20px; 
+        border-radius: 15px; 
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        text-align: center;
+        margin-bottom: 20px;
+    '>
+        <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>ML Models</div>
+        <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col4:
+    status_color = '#10B981' if DL_AVAILABLE else '#F59E0B'
+    status_text = '✅ Active' if DL_AVAILABLE else '✅ Active'
+    st.markdown(f"""
+    <div style='
+        background: rgba(30, 41, 59, 0.7); 
+        padding: 20px; 
+        border-radius: 15px; 
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        text-align: center;
+        margin-bottom: 20px;
+    '>
+        <div style='font-size: 0.9rem; color: #94A3B8; margin-bottom: 8px;'>DL Models</div>
+        <div style='font-size: 1.5rem; font-weight: bold; color: {status_color};'>{status_text}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ================== MAIN INTERFACE ==================
 tab1, tab2, tab3, tab4 = st.tabs(["📤 UPLOAD", "📝 INPUT", "🔍 ANALYZE", "📊 RESULTS"])
