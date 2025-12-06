@@ -18,6 +18,20 @@ import os
 import warnings
 import io
 warnings.filterwarnings('ignore')
+# DEBUG: Test if logo loads
+import os
+logo_path = "assets/logo.png"
+print(f"Current directory: {os.getcwd()}")
+print(f"Logo exists: {os.path.exists(logo_path)}")
+if os.path.exists(logo_path):
+    print(f"Logo size: {os.path.getsize(logo_path)} bytes")
+    
+    # Try to display with st.image
+    try:
+        st.image(logo_path, width=100)
+        print("✅ Logo displayed with st.image()")
+    except Exception as e:
+        print(f"❌ Error displaying logo: {e}")
 
 # ================== SIMPLE LOADING SCREEN ==================
 if 'app_loaded' not in st.session_state:
@@ -36,7 +50,7 @@ if not st.session_state.app_loaded:
         text-align: center;
         padding: 20px;
     ">
-        <img src="../assets/logo.png" alt="FactGuard Logo" style="height: 100px; width: auto; margin-bottom: 20px;">
+        <img src="assets/logo.png" alt="FactGuard Logo" style="max-height: 120px; width: auto; max-width: 100%;">
         <h1 style="color: #3B82F6; font-size: 2.5rem; margin-bottom: 10px;">
             FACTGUARD PRODUCTION v3.0
         </h1>
